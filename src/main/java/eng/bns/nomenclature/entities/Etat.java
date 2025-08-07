@@ -8,13 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Data@AllArgsConstructor
 @NoArgsConstructor
-@Data
-@AllArgsConstructor
-
-public class MouvementCommercial {
+public class Etat {
     @Id @GeneratedValue
+    private Long id;
 
-private Long id;
-private String libelle;
+    private String libelle;
+
 }

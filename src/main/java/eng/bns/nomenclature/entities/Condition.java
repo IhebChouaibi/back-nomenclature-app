@@ -1,13 +1,19 @@
 package eng.bns.nomenclature.entities;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Date;
-
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Condition {
+    @Id
+    @GeneratedValue(strategy =  GenerationType.IDENTITY )
     private Long id ;
-    private ConditionType type;
     private Date dateDebut;
     private Date dateFin;
 
@@ -17,7 +23,7 @@ public class Condition {
     private Chapitre chapitre;
     @ManyToOne
     @JoinColumn(name="id_nomenclature")
-    private Nomenclature nomenclature;
+    private TARIC nomenclature;
 
 
 }

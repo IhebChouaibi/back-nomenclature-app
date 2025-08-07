@@ -13,15 +13,18 @@ import java.util.List;
 @Table(name="sous-position")
 @Entity
 public class SousPosition {
-    @Id
-    private String idSousPosition;
+    @Id    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    private Long idSousPosition;
+    @Column(unique = true )
+
+    private String codeSousPosition;
+    @Column(length = 1000)
+
     private String libelleSousPosition;
     @ManyToOne
-    @JoinColumn(name = "id_Position")
+    @JoinColumn(name = "id_position")
     private Position position;
     @OneToMany(mappedBy = "sousPosition", fetch = FetchType.LAZY)
-    private List<NomenclatureCombinee> nomenclatureCombinees;
-    public String getSHSix(){
-        return position.getSHFour()+""+idSousPosition;
-    }
+    private List<NC> nomenclatureCombinees;
 }

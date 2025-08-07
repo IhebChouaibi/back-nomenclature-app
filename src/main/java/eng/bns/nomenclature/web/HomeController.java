@@ -1,0 +1,185 @@
+package eng.bns.nomenclature.web;
+
+import eng.bns.nomenclature.dto.*;
+import eng.bns.nomenclature.entities.Section;
+import eng.bns.nomenclature.entities.SousPosition;
+import eng.bns.nomenclature.entities.User;
+import eng.bns.nomenclature.mapper.SectionMapper;
+import eng.bns.nomenclature.repository.SectionRepository;
+import eng.bns.nomenclature.repository.UserRepository;
+import eng.bns.nomenclature.service.HomeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
+
+@RestController
+public class HomeController {
+    private final UserRepository userRepository;
+    private final HomeService homeService;
+
+private final SectionRepository sectionRepository;
+
+    public HomeController(UserRepository userRepository, HomeService homeService, SectionMapper sectionMapper, SectionRepository sectionRepository) {
+        this.userRepository = userRepository;
+        this.homeService = homeService;
+
+        this.sectionRepository = sectionRepository;
+    }
+
+    @GetMapping("/home")
+
+    public ResponseEntity <HomeResponse>home (){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findUsersByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        HomeResponse response = new HomeResponse(
+                "Bienvenue sur l'espace administrateur",
+                user.getUsername(),
+                user.getEmail(),
+                user.getRoles().toString(),
+                user.getId()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+@PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/test-sections")
+    public ResponseEntity<?> testSections() {
+        List<Section> sections = sectionRepository.findAll();
+
+        return ResponseEntity.ok(sections);
+    }
+
+    @GetMapping("/section")
+    @PreAuthorize("hasRole('ADMIN')")
+
+    public ResponseEntity<Page<SectionDto>> section( @RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "7") int size){
+        Page<SectionDto> response =homeService.getAllSectionsPaginated(PageRequest.of(page, size));
+
+    return  ResponseEntity.ok(response);
+
+    }
+
+    @GetMapping("section/search")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SectionDto> searchSection(
+            @RequestParam String libelleSection){
+        SectionDto sectionDto = homeService.searchSections(libelleSection);
+        return ResponseEntity.ok(sectionDto);
+
+    }
+
+    @PostMapping("addPosition")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PositionDto> addPosition (
+            @RequestBody PositionDto positionDto){
+        PositionDto createdPosition = homeService.addPosition(positionDto);
+        return new ResponseEntity<>(createdPosition, HttpStatus.CREATED);
+
+    }
+
+    @PostMapping("addSousPosition")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SousPositionDto> addSousPosition (
+            @RequestBody SousPositionDto sousPositionDto){
+        SousPositionDto sousPosition = homeService.addSousPosition(sousPositionDto);
+        return new ResponseEntity<>(sousPositionDto, HttpStatus.CREATED);
+
+    }
+
+    @PostMapping("addSection")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SectionDto> addSection (
+            @RequestBody SectionDto sectionDto) {
+        SectionDto section = homeService.addSection(sectionDto);
+        return new ResponseEntity<>(section, HttpStatus.CREATED);
+    }
+
+    @PostMapping("addChapitre")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ChapitreDto> addChapitre (
+            @RequestBody ChapitreDto chapitreDto) {
+        ChapitreDto section = homeService.addChapitre(chapitreDto);
+        return new ResponseEntity<>(section, HttpStatus.CREATED);
+    }
+
+    @PatchMapping("updateSection")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SectionDto> updateSection(@RequestBody Long idSection, @RequestBody String  sectionLibelle) {
+        SectionDto newSection= homeService.updateSectionLibelle(idSection,sectionLibelle);
+
+return ResponseEntity.ok(newSection);
+
+    }
+
+
+    @PatchMapping("updatePosition")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PositionDto> updatePosition(Long idPosition, @RequestBody String  positionLibelle) {
+        PositionDto newPosition= homeService.updatePositionLibelle(idPosition,positionLibelle);
+
+        return ResponseEntity.ok(newPosition);
+
+    }
+
+    @PatchMapping("updateSousPosition")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SousPositionDto> updateSousPosition(Long idSousPosition, @RequestBody String  sousPositionLibelle) {
+        SousPositionDto newSousPosition= homeService.updateSousPositionLibelle(idSousPosition,sousPositionLibelle);
+
+        return ResponseEntity.ok(newSousPosition);
+
+    }
+
+    @PatchMapping("updateChapitre")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ChapitreDto> updateChapitre(@RequestBody Long idChapitre, @RequestBody String  chapitreLibelle) {
+        ChapitreDto newSousPosition= homeService.updateChapitreLibelle(idChapitre,chapitreLibelle);
+
+        return ResponseEntity.ok(newSousPosition);
+
+    }
+
+
+    @DeleteMapping("deleteSection")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SectionDto> deleteSection(Long idSection) {
+        homeService.deleteSection(idSection);
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("deletePosition")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PositionDto> deletePosition(Long idPosition) {
+        homeService.deletePosition(idPosition);
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("deleteSousPosition")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SousPositionDto> deleteSousPosition(Long idSousPosition) {
+        homeService.deleteSousPosition(idSousPosition);
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("deleteChapitre")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ChapitreDto> deleteChapitre(Long idChapitre) {
+        homeService.deleteChapitre(idChapitre);
+        return ResponseEntity.ok().build();
+    }
+
+
+}

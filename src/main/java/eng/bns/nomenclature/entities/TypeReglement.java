@@ -1,14 +1,23 @@
 package eng.bns.nomenclature.entities;
 
-public enum TypeReglement {
-    Antidumping,
-    Abrogation,
-    Suspension,
-    Exonération,
-    Interdiction,
-    Licence_obligatoire,
-    Quotas,
-    Mesure_de_sauvegarde,
-    Regle_dorigine
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+ @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+public class TypeReglement {
+    @Id   @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    private Long id;
+    private String libelle;
+    public String description;
+    private String code;
 
 }

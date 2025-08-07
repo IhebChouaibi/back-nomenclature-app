@@ -14,23 +14,34 @@ import java.sql.Date;
 @Table(name="regelements")
 @Entity
 public class Reglementation {
-    @Id
-    private String idReglementation ;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idReglement ;
+
+
+    private String codeReglementation ;
     private String ref ;
-    @Enumerated(EnumType.STRING)
-    private TypeReglement   type ;
     private String resume ;
     private int numeroPage ;
     private int numeroJournal ;
-    private String pays;
-private Date debutValidite ;
+
+    @Column(name = "approuve")
+    private Boolean approuve;
+    private Date debutValidite ;
     private Date finValidite ;
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "id_etat")
+    private Etat etat;
+    @ManyToOne
+    @JoinColumn(name = "id_pays")
+    private Pays pays;
 
-    private ApprobationEtat approbationEtat ;
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name="id_type_reglement")
+    private TypeReglement typeReglement ;
 
-    private RemplacementEtat remplacementEtat ;
+    @ManyToOne
+    @JoinColumn(name = "id_taric")
+    private TARIC taric;
 
 
 

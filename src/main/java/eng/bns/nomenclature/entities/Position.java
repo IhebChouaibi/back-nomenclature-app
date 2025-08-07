@@ -13,8 +13,14 @@ import java.util.List;
 @Table(name="position")
 @Entity
 public class Position {
-    @Id
-    private String idPosition;
+    @Id   @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    private Long idPosition ;
+    @Column(unique = true )
+
+    private String codePosition;
+    @Column(length = 1000)
+
     private String libellePosition;
     @ManyToOne
     @JoinColumn(name="id_Chapitre")
@@ -23,7 +29,4 @@ public class Position {
     private List<SousPosition> sousPosition;
 
 
-    public String getSHFour(){
-        return chapitre.getIdChapitre()+this.idPosition;
-    }
 }

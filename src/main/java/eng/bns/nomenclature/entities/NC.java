@@ -12,17 +12,20 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name="nomenclature combinee")
 @Entity
-public class NomenclatureCombinee {
+public class NC {
     @Id
-    private  String idNC;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idNCombinee;
+    @Column(unique = true )
+
+    private  String codeNCombinee;
+    @Column(length = 1000)
+
     private  String libelleNC;
     @ManyToOne
     @JoinColumn(name="id_Sous_Position")
     private SousPosition sousPosition;
 @OneToMany(mappedBy = "nomenclatureCombinee", fetch = FetchType.LAZY)
-private List<Nomenclature> nomenclatures;
-    public String getNC (){
-        return sousPosition.getSHSix()+ idNC;
-    }
+private List<TARIC> nomenclatures;
 
 }

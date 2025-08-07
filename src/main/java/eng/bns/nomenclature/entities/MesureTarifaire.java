@@ -14,12 +14,17 @@ import java.sql.Date;
 @Entity
 public class MesureTarifaire {
   @Id
-    private String id;
-  private String  pays;
-  @Enumerated(EnumType.STRING)
-
-  private MouvementCommercial mouvementCommercial;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  private String  libelle;
+  @ManyToOne
+  @JoinColumn(name = "id_pays")
+  private Pays pays;
+  @ManyToOne
+  @JoinColumn(name="id_mouvement")
+  private MouvementCommercial mouvementCommercial ;
   private Date dateDebut ;
   private Date dateFin ;
+
 
 }

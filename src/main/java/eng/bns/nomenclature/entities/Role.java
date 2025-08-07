@@ -5,20 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-@Entity
 @Data
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="sections")
-public class Section {
+public class Role {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idSection ;
-  private  String codeSection;
-  private String libelleSection;
-  @OneToMany (mappedBy = "section" , fetch = FetchType.EAGER)
-  private List<Chapitre> chapitres;
-
+    private Long id;
+    private String name;
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    private List<User> users = new ArrayList<>();
 }
