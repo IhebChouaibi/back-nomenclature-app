@@ -2,6 +2,7 @@ package eng.bns.nomenclature.service;
 
 import eng.bns.nomenclature.dto.*;
 import eng.bns.nomenclature.entities.*;
+import eng.bns.nomenclature.exception.CodeNotFoundException;
 import eng.bns.nomenclature.mapper.*;
 import eng.bns.nomenclature.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +29,19 @@ public class HomeServiceImpl implements HomeService{
     private final SousPositionMapper sousPositionMapper;
     private final SousPositionRespositry sousPositionRespositry;
     private final ChapitreRepository chapitreRepository;
-    private final NCMapper           ncMapper;
+    private final NcMapper           ncMapper;
 
-private final TARICMapper       taricMapper;
-private  SuffixMapper suffixMapper;
-private SuffixRepository  suffixRepository;
+    private final TARICMapper       taricMapper;
+        private  SuffixMapper suffixMapper;
+    private SuffixRepository  suffixRepository;
+    private final TaricRepository taricRepository;
+
+
+
     @Override
     public ChapitreDto addChapitre(ChapitreDto chapitreDto) {
-        Chapitre chapitre = chapitreRepository.save(chapitreMapper.mapChapitreDtoToChapitre(chapitreDto));
-        return chapitreMapper.mapChapitreToChapitreDto(chapitre);
+        Chapitre chapitre = chapitreRepository.save(chapitreMapper.toEntity(chapitreDto));
+        return chapitreMapper.toDto(chapitre);
 
     }
 
@@ -47,11 +52,16 @@ private SuffixRepository  suffixRepository;
     }
 
     @Override
-    public ChapitreDto updateChapitreLibelle(Long idChapitre, String ChapitreLibelle) {
-        Chapitre existChapitre = chapitreRepository.findById(idChapitre).orElseThrow(()->new RuntimeException("Chapitre not found"));
-        existChapitre.setLibelleChapitre(ChapitreLibelle);
-        chapitreRepository.save(existChapitre);
-        return chapitreMapper.mapChapitreToChapitreDto(existChapitre);
+    public ChapitreDto updateChapitre(Long idChapitre, ChapitreDto chapitreDto) {
+        Section section = sectionRepository.findById(chapitreDto.getIdSection()).orElseThrow(()->new CodeNotFoundException("Section inexistante"));
+        Chapitre existingChapitre = chapitreRepository.findById(idChapitre).orElseThrow(()->new CodeNotFoundException("Chapitre inexistant"));
+         existingChapitre.setCodeChapitre(chapitreDto.getCodeChapitre());
+         existingChapitre.setLibelleChapitre(chapitreDto.getLibelleChapitre());
+         existingChapitre.setSection(section);
+         Chapitre updatedChapitre = chapitreRepository.save(existingChapitre);
+         return chapitreMapper.toDto(updatedChapitre);
+
+
 
     }
 
@@ -82,59 +92,65 @@ private SuffixRepository  suffixRepository;
                                             Optional.ofNullable(nc.getNomenclatures())
                                             .orElse(Collections.emptyList())
                                             .stream()
-                                            .map(taricMapper::mapTaricToTaricDto)
+                                            .map(taricMapper::toDto)
                                             .collect(Collectors.toList());
-                                    NCDto ncDto = ncMapper.mapNCToNCDto(nc);
+                                    NCDto ncDto = ncMapper.toDto(nc);
                                     ncDto.setNomenclatures(taricDtos);
                                     ncDtos.add(ncDto);
 
                                 }
-                                SousPositionDto spDto = sousPositionMapper.mapSousPositionToSousPositionDto(sousPosition);
+                                SousPositionDto spDto = sousPositionMapper.toDto(sousPosition);
                                 spDto.setNomenclatureCombinees(ncDtos);
                                 sousPositionDtos.add(spDto);
 
                             }
 
-                            PositionDto posDto = positionMapper.mapPositionToPositionDto(position);
+                            PositionDto posDto = positionMapper.toDto(position);
                             posDto.setSousPositions(sousPositionDtos);
                             positionDtos.add(posDto);
                         }
 
-                        ChapitreDto chapDto = chapitreMapper.mapChapitreToChapitreDto(chapitre);
+                        ChapitreDto chapDto = chapitreMapper.toDto(chapitre);
                         chapDto.setPositions(positionDtos);
                         chapitreDtos.add(chapDto);
                     }
 
-                    SectionDto sectionDto = sectionMapper.mapSectionToSectionDto(section);
+                    SectionDto sectionDto = sectionMapper.toDto(section);
                     sectionDto.setChapitres(chapitreDtos);
                     return sectionDto;
                 });
     }
 
     @Override
-    public SectionDto searchSections(String libelleSection) {
-        Section section = sectionRepository.findByLibelleSection(libelleSection);
-        return sectionMapper.mapSectionToSectionDto(section);
+    public Page<TARICDto> searchTaricByCode(String keyword,Pageable pageable) {
+        if (keyword == null || keyword.length() >10 || keyword.length() < 4) {
+            throw new IllegalArgumentException("Le code doit contenir au moins 2 caractères");
+        }
+        Page<TARIC> taric = taricRepository.findByCodeNomenclatureStartingWith(keyword,pageable);
+        if (taric.isEmpty()) {
+            throw new CodeNotFoundException("Aucun code TARIC trouvé commençant par: " + keyword);
+        }
 
-
+        return taric.map(taricMapper::toDto);
     }
+
 
     @Override
     public PositionDto addPosition(PositionDto positionDto) {
-        Position position = positionRepository.save(positionMapper.mapPositionDtoToPosition(positionDto));
-        return positionMapper.mapPositionToPositionDto(position);
+        Position position = positionRepository.save(positionMapper.toEntity(positionDto));
+        return positionMapper.toDto(position);
     }
 
     @Override
     public SousPositionDto addSousPosition(SousPositionDto sousPositionDto) {
-        SousPosition sousPosition = sousPositionRespositry.save(sousPositionMapper.mapSousPositionDtoToSousPosition(sousPositionDto));
-        return  sousPositionMapper.mapSousPositionToSousPositionDto(sousPosition);
+        SousPosition sousPosition = sousPositionRespositry.save(sousPositionMapper.toEntity(sousPositionDto));
+        return  sousPositionMapper.toDto(sousPosition);
     }
 
     @Override
     public SectionDto addSection(SectionDto sectionDto) {
-        Section section = sectionRepository.save(sectionMapper.mapSectionDtoToSection(sectionDto));
-        return sectionMapper.mapSectionToSectionDto(section);
+        Section section = sectionRepository.save(sectionMapper.toEntity(sectionDto));
+        return sectionMapper.toDto(section);
     }
 
     @Override
@@ -142,8 +158,9 @@ private SuffixRepository  suffixRepository;
         Section existSection = sectionRepository.findById(id).orElseThrow(()->new RuntimeException("Section not found"));
         existSection.setLibelleSection(sectionLibelle);
         sectionRepository.save(existSection);
-        return sectionMapper.mapSectionToSectionDto(existSection);
+        return sectionMapper.toDto(existSection);
     }
+
 
     @Override
     public void deleteSection(Long idSectionDto) {
@@ -153,15 +170,16 @@ private SuffixRepository  suffixRepository;
     }
 
     @Override
-    public PositionDto updatePositionLibelle(Long id ,String positionLibelle) {
-        Position existPosition = positionRepository.findById(id).orElseThrow(()->new RuntimeException("Position not found"));
-
-        existPosition.setLibellePosition(positionLibelle);
-        positionRepository.save(existPosition);
-        return positionMapper.mapPositionToPositionDto(existPosition);
-
-
+    public PositionDto updatePosition(Long id, PositionDto positionDto) {
+      Chapitre chapitre = chapitreRepository.findById(positionDto.getIdChapitre()).orElseThrow(()->new CodeNotFoundException("Chapitre inexistant"));
+      Position existingPosition = positionRepository.findById(id).orElseThrow(()->new CodeNotFoundException("Position inexistante"));
+      existingPosition.setCodePosition(positionDto.getCodePosition());
+      existingPosition.setLibellePosition(positionDto.getLibellePosition());
+      existingPosition.setChapitre(chapitre);
+      Position updatedPosition = positionRepository.save(existingPosition);
+      return positionMapper.toDto(updatedPosition);
     }
+
 
     @Override
     public void deletePosition(Long idposition) {
@@ -171,13 +189,16 @@ private SuffixRepository  suffixRepository;
     }
 
     @Override
-    public SousPositionDto updateSousPositionLibelle(Long id ,String sousPositionLibelle) {
-        SousPosition existSouposition = sousPositionRespositry.findById(id).orElseThrow(()->new RuntimeException("SousPosition not found"));
-        existSouposition.setLibelleSousPosition(sousPositionLibelle);
-        sousPositionRespositry.save(existSouposition);
-
-        return sousPositionMapper.mapSousPositionToSousPositionDto(existSouposition);
+    public SousPositionDto updateSousPosition(Long id, SousPositionDto sousPositionDto) {
+      Position position = positionRepository.findById(sousPositionDto.getIdPosition()).orElseThrow(()->new CodeNotFoundException("Position inexistante"));
+      SousPosition existingSousPosition = sousPositionRespositry.findById(id).orElseThrow(()->new CodeNotFoundException("Sous-position inexistante"));
+      existingSousPosition.setCodeSousPosition(sousPositionDto.getCodeSousPosition());
+      existingSousPosition.setLibelleSousPosition(sousPositionDto.getLibelleSousPosition());
+      existingSousPosition.setPosition(position);
+      SousPosition updatedSousPosition = sousPositionRespositry.save(existingSousPosition);
+      return sousPositionMapper.toDto(updatedSousPosition);
     }
+
 
     @Override
     public void deleteSousPosition(Long idSousPositionDto) {

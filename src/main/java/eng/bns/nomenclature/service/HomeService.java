@@ -1,31 +1,26 @@
 package eng.bns.nomenclature.service;
 
-import eng.bns.nomenclature.dto.ChapitreDto;
-import eng.bns.nomenclature.dto.PositionDto;
-import eng.bns.nomenclature.dto.SectionDto;
-import eng.bns.nomenclature.dto.SousPositionDto;
-import eng.bns.nomenclature.entities.Position;
+import eng.bns.nomenclature.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 public interface HomeService {
 
 
-    //List<ChapitreDto> getAllChapitres(SectionDto sectionDto);
 ChapitreDto addChapitre(ChapitreDto chapitreDto);
 void deleteChapitre(Long idChapitre);
-ChapitreDto updateChapitreLibelle(Long idChapitre,String ChapitreLibelle);
+ChapitreDto updateChapitre(Long idChapitre, ChapitreDto chapitreDto);
     Page<SectionDto> getAllSectionsPaginated(Pageable pageable);
-    SectionDto searchSections(String keyword);
+    Page<TARICDto> searchTaricByCode(String keyword , Pageable pageable);
     PositionDto addPosition(PositionDto positionDto);
     SousPositionDto addSousPosition(SousPositionDto sousPositionDto);
     SectionDto addSection(SectionDto sectionDto);
-    SectionDto updateSectionLibelle(Long id ,String sectionLielle);
+    SectionDto updateSectionLibelle(Long id ,String sectionLibelle);
     void deleteSection(Long idSectionDto);
-    PositionDto updatePositionLibelle(Long id ,String positionLibelle);
+    PositionDto updatePosition(Long id ,PositionDto positionDto);
     void deletePosition( Long idPositionDto);
-    SousPositionDto updateSousPositionLibelle(Long id ,String sousPositionLibelle);
+    SousPositionDto updateSousPosition(Long id ,SousPositionDto sousPositionDto);
     void deleteSousPosition(Long idSousPositionDto);
+
 }

@@ -2,17 +2,10 @@ package eng.bns.nomenclature.mapper;
 
 import eng.bns.nomenclature.dto.PositionDto;
 import eng.bns.nomenclature.entities.Position;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class PositionMapper {
-    private ModelMapper modelMapper=new ModelMapper();
-
-    public Position mapPositionDtoToPosition(eng.bns.nomenclature.dto.PositionDto positionDto){
-        return modelMapper.map(positionDto,Position.class);
-    }
-    public PositionDto mapPositionToPositionDto(Position position){
-        return modelMapper.map(position,PositionDto.class);
-    }
+@Mapper(componentModel = "spring")
+public interface PositionMapper {
+    PositionDto toDto(Position position);
+    Position toEntity(PositionDto positionDto);
 }

@@ -5,10 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @RestController
 public class ExcelImportController {
@@ -20,23 +21,22 @@ public class ExcelImportController {
     }
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadExcelFile(@RequestParam("file") MultipartFile file) {
-        // Validate file input
+    public ResponseEntity<?> uploadExcelFile(@RequestParam("file") MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            return ResponseEntity.badRequest().body("No file uploaded. Please select a file.");
+            return ResponseEntity.badRequest().body(Map.of("error", "File is empty or missing. Please select a valid Excel file."));
         }
 
         if (!isExcelFile(file)) {
             return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-                    .body("Invalid file format. Only Excel files are allowed.");
+                    .body(Map.of("error", "File is not an Excel file. Please select a valid Excel file."));
         }
 
         try {
             excelImportService.importExcelData(file);
-            return ResponseEntity.ok("Excel data imported successfully!");
+            return ResponseEntity.ok(Map.of("message", "Excel data imported successfully."));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body("Error importing data: " + e.getMessage());
+                    .body(Map.of("error", "An error occurred while importing the Excel data: " + e.getMessage()));
         }
     }
 

@@ -2,28 +2,24 @@ package eng.bns.nomenclature.mapper;
 
 import eng.bns.nomenclature.dto.TARICDto;
 import eng.bns.nomenclature.entities.TARIC;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
-@Component
-public class TARICMapper {
-    private ModelMapper modelMapper = new ModelMapper();
-    public TARIC mapTaricDtoToTaric(eng.bns.nomenclature.dto.TARICDto taricDto){
-        return modelMapper.map(taricDto,TARIC.class);
-    }
-    public eng.bns.nomenclature.dto.TARICDto mapTaricToTaricDto(TARIC taric){
-        TARICDto taricDto = new TARICDto();
-        taricDto.setIdNomenclature(taric.getIdNomenclature());
-        taricDto.setCodeNomenclature(taric.getCodeNomenclature());
-        taricDto.setLibelleNomenclature(taric.getLibelleNomenclature());
-        if(taric.getSuffix() != null){
-            taricDto.setIdSuffix(taric.getSuffix().getIdSuffix());
-        }
-        if (taric.getNomenclatureCombinee() != null) {
-            taricDto.setIdNCombinee(taric.getNomenclatureCombinee().getIdNCombinee());
-        }
+@Mapper(componentModel = "spring")
+public interface TARICMapper {
 
-        return taricDto;
+    @Mappings({
+            @Mapping(source = "suffix.idSuffix", target = "idSuffix"),
+            @Mapping(source = "nomenclatureCombinee.idNCombinee", target = "idNCombinee")
+    })
+    TARICDto toDto(TARIC taric);
 
-    }
+    @InheritInverseConfiguration
+    @Mappings({
+            @Mapping(target = "suffix", ignore = true), // à gérer manuellement
+            @Mapping(target = "nomenclatureCombinee", ignore = true) // idem
+    })
+    TARIC toEntity(TARICDto dto);
 }

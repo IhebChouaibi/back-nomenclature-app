@@ -26,7 +26,7 @@ public class DetailsNomenclatureServiceImpl implements DetailsNomenclatureServic
         if (taric == null) {
             return null;
         }
-        return taricMapper.mapTaricToTaricDto(taric);
+        return taricMapper.toDto(taric);
 
     }
 

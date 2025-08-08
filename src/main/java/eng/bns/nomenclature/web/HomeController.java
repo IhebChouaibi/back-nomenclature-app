@@ -2,7 +2,6 @@ package eng.bns.nomenclature.web;
 
 import eng.bns.nomenclature.dto.*;
 import eng.bns.nomenclature.entities.Section;
-import eng.bns.nomenclature.entities.SousPosition;
 import eng.bns.nomenclature.entities.User;
 import eng.bns.nomenclature.mapper.SectionMapper;
 import eng.bns.nomenclature.repository.SectionRepository;
@@ -18,9 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 
 @RestController
@@ -75,12 +72,13 @@ private final SectionRepository sectionRepository;
 
     }
 
-    @GetMapping("section/search")
+    @GetMapping("taric/search")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SectionDto> searchSection(
-            @RequestParam String libelleSection){
-        SectionDto sectionDto = homeService.searchSections(libelleSection);
-        return ResponseEntity.ok(sectionDto);
+    public ResponseEntity<Page<TARICDto>> searchTaricByCode(@RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "20") int size,
+            @RequestParam String  codeTaric){
+        Page<TARICDto> taricDtos = homeService.searchTaricByCode(codeTaric ,PageRequest.of(page, size));
+        return ResponseEntity.ok(taricDtos);
 
     }
 
@@ -118,9 +116,9 @@ private final SectionRepository sectionRepository;
         return new ResponseEntity<>(section, HttpStatus.CREATED);
     }
 
-    @PatchMapping("updateSection")
+    @PatchMapping("updateSection/{idSection}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SectionDto> updateSection(@RequestBody Long idSection, @RequestBody String  sectionLibelle) {
+    public ResponseEntity<SectionDto> updateSection(@PathVariable Long idSection, @RequestBody String  sectionLibelle) {
         SectionDto newSection= homeService.updateSectionLibelle(idSection,sectionLibelle);
 
 return ResponseEntity.ok(newSection);
@@ -128,28 +126,28 @@ return ResponseEntity.ok(newSection);
     }
 
 
-    @PatchMapping("updatePosition")
+    @PatchMapping("updatePosition/{idPosition}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PositionDto> updatePosition(Long idPosition, @RequestBody String  positionLibelle) {
-        PositionDto newPosition= homeService.updatePositionLibelle(idPosition,positionLibelle);
+    public ResponseEntity<PositionDto> updatePosition( @PathVariable Long idPosition, @RequestBody PositionDto  positionDto) {
+        PositionDto newPosition= homeService.updatePosition(idPosition,positionDto);
 
         return ResponseEntity.ok(newPosition);
 
     }
 
-    @PatchMapping("updateSousPosition")
+    @PatchMapping("updateSousPosition/{idSousPosition}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SousPositionDto> updateSousPosition(Long idSousPosition, @RequestBody String  sousPositionLibelle) {
-        SousPositionDto newSousPosition= homeService.updateSousPositionLibelle(idSousPosition,sousPositionLibelle);
+    public ResponseEntity<SousPositionDto> updateSousPosition( @PathVariable Long idSousPosition, @RequestBody SousPositionDto  sousPositionDto) {
+        SousPositionDto newSousPosition= homeService.updateSousPosition(idSousPosition,sousPositionDto);
 
         return ResponseEntity.ok(newSousPosition);
 
     }
 
-    @PatchMapping("updateChapitre")
+    @PatchMapping("updateChapitre/{idChapitre}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ChapitreDto> updateChapitre(@RequestBody Long idChapitre, @RequestBody String  chapitreLibelle) {
-        ChapitreDto newSousPosition= homeService.updateChapitreLibelle(idChapitre,chapitreLibelle);
+    public ResponseEntity<ChapitreDto> updateChapitre( @PathVariable Long idChapitre, @RequestBody ChapitreDto  chapitreDto) {
+        ChapitreDto newSousPosition= homeService.updateChapitre(idChapitre,chapitreDto);
 
         return ResponseEntity.ok(newSousPosition);
 

@@ -1,7 +1,6 @@
 package eng.bns.nomenclature.service;
 
 import eng.bns.nomenclature.dto.TaricRequest;
-import eng.bns.nomenclature.entities.Chapitre;
 import eng.bns.nomenclature.entities.NC;
 import eng.bns.nomenclature.entities.Suffix;
 import eng.bns.nomenclature.entities.TARIC;
@@ -55,6 +54,11 @@ public class TaricServiceImpl implements TaricService {
         taric.setNomenclatureCombinee(nc);
 
         taricRepository.save(taric);
+
+    }
+
+    @Override
+    public void updateTaric(TaricRequest taricRequest) {
 
     }
 }
