@@ -14,7 +14,7 @@ public class ChapitreDto {
     private Long idChapitre;
     private String codeChapitre;
     private String libelleChapitre;
-// Add this
+
     private Long idSection;
     private List<PositionDto> positions;
 }

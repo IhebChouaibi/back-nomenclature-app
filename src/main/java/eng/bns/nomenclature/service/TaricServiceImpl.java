@@ -1,10 +1,14 @@
 package eng.bns.nomenclature.service;
 
+import eng.bns.nomenclature.dto.NotesDto;
+import eng.bns.nomenclature.dto.TARICDto;
 import eng.bns.nomenclature.dto.TaricRequest;
 import eng.bns.nomenclature.entities.NC;
+import eng.bns.nomenclature.entities.Notes;
 import eng.bns.nomenclature.entities.Suffix;
 import eng.bns.nomenclature.entities.TARIC;
 import eng.bns.nomenclature.exception.CodeNotFoundException;
+import eng.bns.nomenclature.mapper.NotesMapper;
 import eng.bns.nomenclature.mapper.TARICMapper;
 import eng.bns.nomenclature.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +23,10 @@ public class TaricServiceImpl implements TaricService {
     private  final TaricRepository  taricRepository;
     private final TARICMapper taricMapper;
     private final SuffixRepository suffixRepository;
+     private final NotesMapper notesMapper;
+     private final NotesRepository notesRepository;
     @Override
-    public void createTaric(TaricRequest taricRequest) {
+    public TARICDto createTaric(TaricRequest taricRequest) {
         String code = taricRequest.getCodeNomenclature();
         String  codeChapitre = code.substring(0,2);
         String codePosition = code.substring(0,4);
@@ -54,11 +60,27 @@ public class TaricServiceImpl implements TaricService {
         taric.setNomenclatureCombinee(nc);
 
         taricRepository.save(taric);
+        return taricMapper.toDto(taric);
 
     }
 
     @Override
-    public void updateTaric(TaricRequest taricRequest) {
-
+    public TARICDto updateTaric(TaricRequest taricRequest) {
+return null;
     }
+
+    @Override
+    public NotesDto addNotesToTaric(Long idTaric, NotesDto notesDto) {
+        TARIC taric = taricRepository.findById(idTaric)
+                .orElseThrow(() -> new CodeNotFoundException("Code TARIC inexistant"));
+
+        Notes notes = notesMapper.toEntity(notesDto);
+        notes.setTaric(taric);
+
+        notesRepository.save(notes);
+
+        return notesMapper.toDto(notes);
+
+
+     }
 }

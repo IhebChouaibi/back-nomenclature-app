@@ -12,14 +12,15 @@ public interface TARICMapper {
 
     @Mappings({
             @Mapping(source = "suffix.idSuffix", target = "idSuffix"),
-            @Mapping(source = "nomenclatureCombinee.idNCombinee", target = "idNCombinee")
+            @Mapping(source = "nomenclatureCombinee.idNCombinee", target = "idNCombinee"),
+
     })
     TARICDto toDto(TARIC taric);
 
     @InheritInverseConfiguration
     @Mappings({
-            @Mapping(target = "suffix", ignore = true), // à gérer manuellement
-            @Mapping(target = "nomenclatureCombinee", ignore = true) // idem
+            @Mapping(target = "suffix", ignore = true),
+            @Mapping(target = "nomenclatureCombinee", ignore = true)
     })
     TARIC toEntity(TARICDto dto);
 }

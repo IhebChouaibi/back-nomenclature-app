@@ -16,6 +16,6 @@ public interface SousPositionMapper {
     SousPositionDto toDto(SousPosition sousPosition);
 
     @InheritInverseConfiguration
-    @Mapping(target = "position", ignore = true) // géré manuellement dans le service
+    @Mapping(target = "position", ignore = true)
     SousPosition toEntity(SousPositionDto dto);
 }

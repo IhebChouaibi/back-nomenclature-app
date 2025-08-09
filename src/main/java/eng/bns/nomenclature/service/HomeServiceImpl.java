@@ -58,6 +58,7 @@ public class HomeServiceImpl implements HomeService{
          existingChapitre.setCodeChapitre(chapitreDto.getCodeChapitre());
          existingChapitre.setLibelleChapitre(chapitreDto.getLibelleChapitre());
          existingChapitre.setSection(section);
+         existingChapitre.setIdChapitre(idChapitre);
          Chapitre updatedChapitre = chapitreRepository.save(existingChapitre);
          return chapitreMapper.toDto(updatedChapitre);
 

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +24,9 @@ public class TARIC {
     @Column(length = 1000)
 
     private String libelleNomenclature ;
-    private Date dateDebutValid ;
-    private Date dateFinValid ;
+
+    private LocalDate dateDebutValid ;
+    private LocalDate dateFinValid ;
     @ManyToOne
     @JoinColumn(name = "id_suffix")
     private Suffix suffix;
@@ -37,6 +39,21 @@ public class TARIC {
     private List<Reglementation> reglementations = new ArrayList<>();
 
 
+    @OneToMany(mappedBy = "taric", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notes> notes = new ArrayList<>();
 
+    @PrePersist
+    @PreUpdate
+    private void initializeDates() {
+        if (dateDebutValid == null) {
+            dateDebutValid = LocalDate.now();
+        }
+
+        if (dateFinValid == null) {
+            dateFinValid = dateDebutValid.plusYears(1);
+        }
+    }
 
 }
+
+
