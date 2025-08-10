@@ -12,7 +12,6 @@ ChapitreDto addChapitre(ChapitreDto chapitreDto);
 void deleteChapitre(Long idChapitre);
 ChapitreDto updateChapitre(Long idChapitre, ChapitreDto chapitreDto);
     Page<SectionDto> getAllSectionsPaginated(Pageable pageable);
-    Page<TARICDto> searchTaricByCode(String keyword , Pageable pageable);
     PositionDto addPosition(PositionDto positionDto);
     SousPositionDto addSousPosition(SousPositionDto sousPositionDto);
     SectionDto addSection(SectionDto sectionDto);

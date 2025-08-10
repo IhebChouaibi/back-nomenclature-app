@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Date;
 @Data
 @AllArgsConstructor
@@ -17,8 +18,8 @@ public class NotesDto {
 
     private String contenu ;
 
-    private Date dateDebutValid;
-    private Date dateFinValid;
+    private LocalDate dateDebutValid;
+    private LocalDate   dateFinValid;
 
     private long  idNomenclature;
 

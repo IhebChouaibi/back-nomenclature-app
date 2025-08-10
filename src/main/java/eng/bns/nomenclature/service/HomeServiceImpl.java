@@ -122,18 +122,7 @@ public class HomeServiceImpl implements HomeService{
                 });
     }
 
-    @Override
-    public Page<TARICDto> searchTaricByCode(String keyword,Pageable pageable) {
-        if (keyword == null || keyword.length() >10 || keyword.length() < 4) {
-            throw new IllegalArgumentException("Le code doit contenir au moins 2 caractères");
-        }
-        Page<TARIC> taric = taricRepository.findByCodeNomenclatureStartingWith(keyword,pageable);
-        if (taric.isEmpty()) {
-            throw new CodeNotFoundException("Aucun code TARIC trouvé commençant par: " + keyword);
-        }
 
-        return taric.map(taricMapper::toDto);
-    }
 
 
     @Override

@@ -72,15 +72,7 @@ private final SectionRepository sectionRepository;
 
     }
 
-    @GetMapping("taric/search")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<TARICDto>> searchTaricByCode(@RequestParam(defaultValue = "0") int page,
-                                                        @RequestParam(defaultValue = "20") int size,
-            @RequestParam String  codeTaric){
-        Page<TARICDto> taricDtos = homeService.searchTaricByCode(codeTaric ,PageRequest.of(page, size));
-        return ResponseEntity.ok(taricDtos);
 
-    }
 
     @PostMapping("addPosition")
     @PreAuthorize("hasRole('ADMIN')")

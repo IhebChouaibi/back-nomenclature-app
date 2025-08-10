@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 @Entity
 @Table(name="notes")
@@ -19,8 +20,8 @@ public class Notes {
     @Column(columnDefinition = "TEXT")
     private String contenu;
 
-    private Date dateDebutValid;
-    private Date dateFinValid;
+    private LocalDate dateDebutValid;
+    private LocalDate dateFinValid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_taric")

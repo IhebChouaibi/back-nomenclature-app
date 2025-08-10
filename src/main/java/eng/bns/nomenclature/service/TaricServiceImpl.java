@@ -12,6 +12,8 @@ import eng.bns.nomenclature.mapper.NotesMapper;
 import eng.bns.nomenclature.mapper.TARICMapper;
 import eng.bns.nomenclature.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
@@ -67,6 +69,19 @@ public class TaricServiceImpl implements TaricService {
     @Override
     public TARICDto updateTaric(TaricRequest taricRequest) {
 return null;
+    }
+    @Override
+    public Page<TARICDto> searchTaricByCode(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.length() >10 || keyword.length() < 2) {
+            throw new IllegalArgumentException("Le code doit contenir au moins 2 caractères");
+        }
+        Page<TARIC> taric = taricRepository.findByCodeNomenclatureStartingWith(keyword,pageable);
+
+        if (taric.isEmpty()) {
+            throw new CodeNotFoundException("Aucun code TARIC trouvé commençant par: " + keyword);
+        }
+
+        return taric.map(taricMapper::toDto);
     }
 
     @Override
