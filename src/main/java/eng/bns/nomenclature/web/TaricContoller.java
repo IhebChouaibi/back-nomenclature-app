@@ -1,7 +1,9 @@
 package eng.bns.nomenclature.web;
 
 import eng.bns.nomenclature.dto.NotesDto;
+import eng.bns.nomenclature.dto.SuffixDto;
 import eng.bns.nomenclature.dto.TARICDto;
+import eng.bns.nomenclature.service.SuffixService;
 import eng.bns.nomenclature.service.TaricService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,10 +19,11 @@ import org.springframework.web.bind.annotation.*;
 public class TaricContoller {
 
     private final TaricService taricService;
+    private final SuffixService suffixService;
 
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("addnote")
+    @PostMapping("taric/addnote")
     public ResponseEntity<NotesDto>  addNotesToTaric(@RequestParam long id , @RequestBody NotesDto notesDto){
        NotesDto newNote=  taricService.addNotesToTaric(id,notesDto);
         return   ResponseEntity.ok(newNote);
@@ -37,4 +40,16 @@ public class TaricContoller {
         return ResponseEntity.ok(taricDtos);
 
     }
+    @GetMapping("taric/suffix/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SuffixDto> getSuffix(@PathVariable Long id){
+        SuffixDto suffixDto = suffixService.getSuffix(id);
+        return ResponseEntity.ok(suffixDto);
+    }
+
+
+
 }
+
+
+

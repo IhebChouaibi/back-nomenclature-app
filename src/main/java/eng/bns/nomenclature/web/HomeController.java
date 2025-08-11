@@ -104,8 +104,8 @@ private final SectionRepository sectionRepository;
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ChapitreDto> addChapitre (
             @RequestBody ChapitreDto chapitreDto) {
-        ChapitreDto section = homeService.addChapitre(chapitreDto);
-        return new ResponseEntity<>(section, HttpStatus.CREATED);
+        ChapitreDto chapitre = homeService.addChapitre(chapitreDto);
+        return new ResponseEntity<>(chapitre, HttpStatus.CREATED);
     }
 
     @PatchMapping("updateSection/{idSection}")

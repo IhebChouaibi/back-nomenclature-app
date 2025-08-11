@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Component
 public class SuffixDto {
-    private Long id;
+    private Long idSuffix;
     private String codeSuffix ;
     private boolean declarable;
 

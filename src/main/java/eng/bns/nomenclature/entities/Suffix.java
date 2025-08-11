@@ -3,6 +3,9 @@ package eng.bns.nomenclature.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 public class Suffix {
@@ -18,5 +21,7 @@ public class Suffix {
 
     @Column(nullable = false)
     private boolean national;
+    @OneToMany(mappedBy = "suffix")
+    private List<TARIC> tarics = new ArrayList<>();
 
 }
