@@ -31,6 +31,7 @@ public class ExcelImportService {
     private final TaricRepository taricRepository;
     private final ChapitreRepository chapitreRepository;
     private final SuffixRepository  suffixRepository;
+    private final DescriptionRepository descriptionRepository;
 
 
     @Transactional
@@ -276,10 +277,15 @@ public class ExcelImportService {
                 if (suffix != null) {
                     taric.setSuffix(suffix);
                 }
+
                 // Set libellé avant sauvegarde
                 String libelle = getMergedLibelle(sheet, row);
                 if (!libelle.isEmpty()) {
-                    taric.setLibelleNomenclature(libelle);
+                    Description description = new Description();
+                    description.setDescription(libelle);
+                    description.setStatus("1");
+                    description.setTaric(taric);
+                    taric.getDescriptions().add(description);
                 }
                 taric = taricRepository.save(taric);
             }
@@ -293,8 +299,14 @@ public class ExcelImportService {
             }
         }
         String newLibelle = getMergedLibelle(sheet, row);
-        if (!newLibelle.isEmpty() && !newLibelle.equals(taric.getLibelleNomenclature())) {
-            taric.setLibelleNomenclature(newLibelle);
+
+
+        if (!newLibelle.isEmpty() ) {
+            Description description = new Description();
+            description.setDescription(newLibelle);
+            description.setStatus("1");
+            description.setTaric(taric);
+            taric.getDescriptions().add(description);
             taricRepository.save(taric);
         }
     }

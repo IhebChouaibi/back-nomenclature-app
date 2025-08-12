@@ -30,9 +30,7 @@ public class ReglementationMapper {
         if (reglementation.getTypeReglement() != null) {
             dto.setIdTypeReglement(reglementation.getTypeReglement().getId());
         }
-        if (reglementation.getTaric() != null) {
-            dto.setIdTaric(reglementation.getTaric().getIdNomenclature());
-        }
+
         return  dto;
     }
 }

@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,6 +27,14 @@ public class MesureTarifaire {
   private MouvementCommercial mouvementCommercial ;
   private Date dateDebut ;
   private Date dateFin ;
-
+    @ManyToMany
+    @JoinTable(
+            name = "mesure_reglementation",
+            joinColumns = @JoinColumn(name = "mesure_id"),
+            inverseJoinColumns = @JoinColumn(name = "reglementation_id")
+    )
+    private List<Reglementation> reglementations = new ArrayList<>();
+@ManyToOne
+ private TARIC taric;
 
 }

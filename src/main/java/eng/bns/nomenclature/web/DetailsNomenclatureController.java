@@ -1,6 +1,5 @@
 package eng.bns.nomenclature.web;
 
-import eng.bns.nomenclature.dto.ReglementationDto;
 import eng.bns.nomenclature.dto.TARICDto;
 import eng.bns.nomenclature.service.DetailsNomenclatureService;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +20,6 @@ public class DetailsNomenclatureController {
         return ResponseEntity.ok(dto);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
 
-    @GetMapping("/regles")
-    public ResponseEntity<ReglementationDto> getRegles(String code){
-        detailsNomenclatureService.getRegles(code);
-        return ResponseEntity.ok().build();
-    }
+
 }

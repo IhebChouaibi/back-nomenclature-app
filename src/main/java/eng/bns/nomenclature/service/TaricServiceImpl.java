@@ -3,10 +3,7 @@ package eng.bns.nomenclature.service;
 import eng.bns.nomenclature.dto.NotesDto;
 import eng.bns.nomenclature.dto.TARICDto;
 import eng.bns.nomenclature.dto.TaricRequest;
-import eng.bns.nomenclature.entities.NC;
-import eng.bns.nomenclature.entities.Notes;
-import eng.bns.nomenclature.entities.Suffix;
-import eng.bns.nomenclature.entities.TARIC;
+import eng.bns.nomenclature.entities.*;
 import eng.bns.nomenclature.exception.CodeNotFoundException;
 import eng.bns.nomenclature.mapper.NotesMapper;
 import eng.bns.nomenclature.mapper.TARICMapper;
@@ -54,8 +51,12 @@ public class TaricServiceImpl implements TaricService {
         NC nc = ncRepository.findByCodeNCombinee(codeNc);
 
         TARIC taric = new TARIC();
+        Description description = new Description();
+        description.setDescription(taricRequest.getLibelleNomenclature());
+        description.setStatus("1");
+        description.setTaric(taric);
         taric.setCodeNomenclature(code);
-        taric.setLibelleNomenclature(taricRequest.getLibelleNomenclature());
+        taric.getDescriptions().add(description);
         taric.setDateDebutValid(taricRequest.getDateDebutValid());
         taric.setDateFinValid(taricRequest.getDateFinValid());
         taric.setSuffix(suffix);
@@ -98,4 +99,5 @@ return null;
 
 
      }
+
 }

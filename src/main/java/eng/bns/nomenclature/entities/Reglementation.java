@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.lang.reflect.Type;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -39,12 +41,8 @@ public class Reglementation {
     @JoinColumn(name="id_type_reglement")
     private TypeReglement typeReglement ;
 
-    @ManyToOne
-    @JoinColumn(name = "id_taric")
-    private TARIC taric;
-
-
-
+    @ManyToMany(mappedBy = "reglementations")
+    private List<MesureTarifaire> mesures = new ArrayList<>();
 
 
 
