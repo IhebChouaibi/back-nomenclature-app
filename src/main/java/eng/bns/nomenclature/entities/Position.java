@@ -25,7 +25,8 @@ public class Position {
     @ManyToOne
     @JoinColumn(name="id_Chapitre")
     private Chapitre chapitre;
-    @OneToMany(mappedBy = "position", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "position", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("idSousPosition ASC")
     private List<SousPosition> sousPosition;
 
 

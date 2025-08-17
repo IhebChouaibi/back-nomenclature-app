@@ -25,7 +25,8 @@ public class NC {
     @ManyToOne
     @JoinColumn(name="id_Sous_Position")
     private SousPosition sousPosition;
-@OneToMany(mappedBy = "nomenclatureCombinee", fetch = FetchType.LAZY)
+@OneToMany(mappedBy = "nomenclatureCombinee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+@OrderBy("idNomenclature ASC")
 private List<TARIC> nomenclatures;
 
 }

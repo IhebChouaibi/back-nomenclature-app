@@ -30,7 +30,8 @@ public class Chapitre {
     private List <Condition> conditions;
 
 
-@OneToMany(mappedBy = "chapitre", fetch = FetchType.LAZY)
+@OneToMany(mappedBy = "chapitre", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+@OrderBy("idPosition ASC")
 private List<Position> positions;
 
 

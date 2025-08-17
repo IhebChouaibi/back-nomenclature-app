@@ -25,6 +25,7 @@ public class SousPosition {
     @ManyToOne
     @JoinColumn(name = "id_position")
     private Position position;
-    @OneToMany(mappedBy = "sousPosition", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "sousPosition", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("idNCombinee ASC")
     private List<NC> nomenclatureCombinees;
 }

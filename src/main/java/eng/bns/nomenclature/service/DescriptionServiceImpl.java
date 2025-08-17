@@ -34,26 +34,31 @@ public class DescriptionServiceImpl implements DescriptionService{
     @Override
     public DescriptionDto createDescription( Long idNomenclature,DescriptionDto descriptionDto) {
         TARIC existTaric = taricRepository.findById(idNomenclature).orElseThrow(() -> new RuntimeException("Code TARIC inexistant"));
-if(existTaric == null){
-    throw new RuntimeException("Code TARIC inexistant");
 
-}
-Description existDescription = descriptionRepository.findByDescription(descriptionDto.getDescription());
-if (existDescription != null) {
-    existDescription.setStatus("1");
-    existDescription.setTaric(existTaric);
-    existTaric.getDescriptions().add(existDescription);
-    taricRepository.save(existTaric);
-    return descriptionMapper.toDto(existDescription);
-}
+        if (existTaric.getDescriptions() != null) {
+            existTaric.getDescriptions().forEach(description -> description.setStatus("0"));
+        }
+
+        Description existDescription = descriptionRepository.findByDescription(descriptionDto.getDescription());
+        if (existDescription != null && existDescription.getStatus().equals("0")) {
+            existDescription.setStatus("1");
+            existDescription.setTaric(existTaric);
+            existTaric.getDescriptions().add(existDescription);
+            taricRepository.save(existTaric);
+            return descriptionMapper.toDto(existDescription);
+        }
 
        descriptionDto.setIdNomenclature(idNomenclature);
        descriptionDto.setStatus("1");
-        existTaric.getDescriptions().add(descriptionMapper.toEntity(descriptionDto));
+
+       Description newDescription = descriptionMapper.toEntity(descriptionDto);
+       newDescription.setTaric(existTaric);
+       existTaric.getDescriptions().add(newDescription);
+        existTaric.getDescriptions().add(newDescription);
         taricRepository.save(existTaric);
 
       descriptionRepository.save(descriptionMapper.toEntity(descriptionDto));
-      return descriptionDto;
+      return descriptionMapper.toDto(newDescription);
     }
 
     @Override

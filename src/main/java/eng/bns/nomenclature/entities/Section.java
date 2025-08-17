@@ -18,7 +18,8 @@ public class Section {
     private Long idSection ;
   private  String codeSection;
   private String libelleSection;
-  @OneToMany (mappedBy = "section" , fetch = FetchType.EAGER)
+  @OneToMany (mappedBy = "section" , fetch = FetchType.EAGER ,cascade = CascadeType.ALL, orphanRemoval = true)
+  @OrderBy("idChapitre ASC")
   private List<Chapitre> chapitres;
 
 }
