@@ -1,13 +1,14 @@
 package eng.bns.nomenclature.web;
 
-import eng.bns.nomenclature.dto.NotesDto;
-import eng.bns.nomenclature.dto.SuffixDto;
-import eng.bns.nomenclature.dto.TARICDto;
+import eng.bns.nomenclature.dto.*;
+import eng.bns.nomenclature.entities.Notes;
+import eng.bns.nomenclature.service.NotesService;
 import eng.bns.nomenclature.service.SuffixService;
 import eng.bns.nomenclature.service.TaricService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +21,21 @@ public class TaricContoller {
 
     private final TaricService taricService;
     private final SuffixService suffixService;
+    private  final NotesService notesService;
 
+
+    @PostMapping("taric/addTaric")
+    @PreAuthorize("hasRole('ADMIN')")
+
+    public ResponseEntity<TARICDto> addTaric(@RequestBody TaricWithDetailsRequest taricRequest){
+      TARICDto createdTaric =  taricService.createTaric(taricRequest);
+        return new  ResponseEntity<>(createdTaric, HttpStatus.CREATED);
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("taric/addnote")
-    public ResponseEntity<NotesDto>  addNotesToTaric(@RequestParam long id , @RequestBody NotesDto notesDto){
-       NotesDto newNote=  taricService.addNotesToTaric(id,notesDto);
+    public ResponseEntity<NotesDto>  addNotesToTaric(@RequestParam long idNomenclature , @RequestBody NotesDto notesDto){
+       NotesDto newNote=  notesService.addNotesToTaric(idNomenclature,notesDto);
         return   ResponseEntity.ok(newNote);
 
     }
@@ -48,6 +58,12 @@ public class TaricContoller {
     }
 
 
+    @PostMapping("taric/addSuffix/{idNomenclature}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SuffixDto> addSuffix(@PathVariable Long idNomenclature ,@RequestBody SuffixDto suffixDto){
+        suffixService.addsuffix(idNomenclature,suffixDto);
+        return  ResponseEntity.ok().build();
+    }
 
 }
 

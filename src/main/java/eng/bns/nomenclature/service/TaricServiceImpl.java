@@ -3,11 +3,13 @@ package eng.bns.nomenclature.service;
 import eng.bns.nomenclature.dto.NotesDto;
 import eng.bns.nomenclature.dto.TARICDto;
 import eng.bns.nomenclature.dto.TaricRequest;
+import eng.bns.nomenclature.dto.TaricWithDetailsRequest;
 import eng.bns.nomenclature.entities.*;
 import eng.bns.nomenclature.exception.CodeNotFoundException;
 import eng.bns.nomenclature.mapper.NotesMapper;
 import eng.bns.nomenclature.mapper.TARICMapper;
 import eng.bns.nomenclature.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +23,14 @@ public class TaricServiceImpl implements TaricService {
     private final NCRepository ncRepository;
     private  final TaricRepository  taricRepository;
     private final TARICMapper taricMapper;
-    private final SuffixRepository suffixRepository;
-     private final NotesMapper notesMapper;
-     private final NotesRepository notesRepository;
+     private final NotesService notesService;
+     private final  DescriptionService descriptionService;
+     private final SuffixService suffixService;
+
     @Override
-    public TARICDto createTaric(TaricRequest taricRequest) {
+    @Transactional
+
+    public TARICDto createTaric(TaricWithDetailsRequest taricRequest) {
         String code = taricRequest.getCodeNomenclature();
         String  codeChapitre = code.substring(0,2);
         String codePosition = code.substring(0,4);
@@ -47,23 +52,40 @@ public class TaricServiceImpl implements TaricService {
             throw new CodeNotFoundException("Nomenclature combinée " + codeNc + " inexistante");
         }
 
-        Suffix suffix = suffixRepository.findByIdSuffix(taricRequest.getSuffixId());
         NC nc = ncRepository.findByCodeNCombinee(codeNc);
 
         TARIC taric = new TARIC();
-        Description description = new Description();
-        description.setDescription(taricRequest.getLibelleNomenclature());
-        description.setStatus("1");
-        description.setTaric(taric);
+
         taric.setCodeNomenclature(code);
-        taric.getDescriptions().add(description);
         taric.setDateDebutValid(taricRequest.getDateDebutValid());
         taric.setDateFinValid(taricRequest.getDateFinValid());
-        taric.setSuffix(suffix);
         taric.setNomenclatureCombinee(nc);
 
-        taricRepository.save(taric);
-        return taricMapper.toDto(taric);
+        Description description = new Description();
+        description.setDescription(taricRequest.getDescriptions().get(0).getDescription());
+        description.setStatus("1");
+        description.setTaric(taric);
+        taric.getDescriptions().add(description);
+
+        nc.getNomenclatures().add(taric);
+        ncRepository.save(nc);
+
+        TARIC savedTarik = taricRepository.save(taric);
+        if (taricRequest.getSuffixDto() != null){
+            suffixService.addsuffix(savedTarik.getIdNomenclature(),taricRequest.getSuffixDto());
+        }
+        if (taricRequest.getDescriptions() != null){
+            taricRequest.getDescriptions().forEach(descriptionDto ->
+                descriptionService.createDescription(savedTarik.getIdNomenclature(),descriptionDto) )  ;
+
+
+        }
+        if (taricRequest.getNotes() != null){
+            taricRequest.getNotes().forEach(notesDto ->
+                    notesService.addNotesToTaric(savedTarik.getIdNomenclature(),notesDto));
+        }
+
+        return taricMapper.toDto(savedTarik);
 
     }
 
@@ -85,19 +107,6 @@ return null;
         return taric.map(taricMapper::toDto);
     }
 
-    @Override
-    public NotesDto addNotesToTaric(Long idTaric, NotesDto notesDto) {
-        TARIC taric = taricRepository.findById(idTaric)
-                .orElseThrow(() -> new CodeNotFoundException("Code TARIC inexistant"));
 
-        Notes notes = notesMapper.toEntity(notesDto);
-        notes.setTaric(taric);
-
-        notesRepository.save(notes);
-
-        return notesMapper.toDto(notes);
-
-
-     }
 
 }

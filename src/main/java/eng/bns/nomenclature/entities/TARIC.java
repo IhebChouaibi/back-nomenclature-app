@@ -46,6 +46,7 @@ public class TARIC {
 
     @OneToMany(mappedBy = "taric", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MesureTarifaire> mesures = new ArrayList<>();
+
     @PrePersist
     @PreUpdate
     private void initializeDates() {

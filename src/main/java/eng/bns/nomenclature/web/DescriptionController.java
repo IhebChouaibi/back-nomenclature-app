@@ -28,4 +28,11 @@ public class DescriptionController {
         return ResponseEntity.ok(descriptionDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/description/add")
+    public ResponseEntity<DescriptionDto>   addDescription(@RequestParam Long idNomenclature,DescriptionDto descriptionDto){
+        descriptionService.createDescription(idNomenclature,descriptionDto);
+        return ResponseEntity.ok().build();
+
+    }
 }
