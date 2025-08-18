@@ -9,6 +9,8 @@ import eng.bns.nomenclature.exception.CodeNotFoundException;
 import eng.bns.nomenclature.mapper.NotesMapper;
 import eng.bns.nomenclature.mapper.TARICMapper;
 import eng.bns.nomenclature.repository.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,8 @@ public class TaricServiceImpl implements TaricService {
      private final NotesService notesService;
      private final  DescriptionService descriptionService;
      private final SuffixService suffixService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     @Transactional
@@ -66,26 +70,26 @@ public class TaricServiceImpl implements TaricService {
         description.setStatus("1");
         description.setTaric(taric);
         taric.getDescriptions().add(description);
+        TARIC savedTaric = taricRepository.save(taric);
 
-        nc.getNomenclatures().add(taric);
-        ncRepository.save(nc);
+        nc.getNomenclatures().add(savedTaric);
 
-        TARIC savedTarik = taricRepository.save(taric);
+
         if (taricRequest.getSuffixDto() != null){
-            suffixService.addsuffix(savedTarik.getIdNomenclature(),taricRequest.getSuffixDto());
+            suffixService.addsuffix(savedTaric.getIdNomenclature(),taricRequest.getSuffixDto());
         }
         if (taricRequest.getDescriptions() != null){
             taricRequest.getDescriptions().forEach(descriptionDto ->
-                descriptionService.createDescription(savedTarik.getIdNomenclature(),descriptionDto) )  ;
+                    descriptionService.createDescription(savedTaric.getIdNomenclature(),descriptionDto) )  ;
 
 
         }
         if (taricRequest.getNotes() != null){
             taricRequest.getNotes().forEach(notesDto ->
-                    notesService.addNotesToTaric(savedTarik.getIdNomenclature(),notesDto));
+                    notesService.addNotesToTaric(savedTaric.getIdNomenclature(),notesDto));
         }
 
-        return taricMapper.toDto(savedTarik);
+        return taricMapper.toDto(savedTaric);
 
     }
 
@@ -107,6 +111,13 @@ return null;
         return taric.map(taricMapper::toDto);
     }
 
+    @Override
+    public Boolean ExistsTaricByCode(String code) {
+        TARIC existTaric = taricRepository.findByCodeNomenclature(code);
+        return existTaric != null;
+
+
+    }
 
 
 }

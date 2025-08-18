@@ -11,5 +11,7 @@ public interface TaricService {
     TARICDto createTaric (TaricWithDetailsRequest taricRequest);
     TARICDto updateTaric (TaricRequest taricRequest);
     Page<TARICDto> searchTaricByCode(String keyword , Pageable pageable);
+    Boolean ExistsTaricByCode(String code);
+
 
 }
