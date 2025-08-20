@@ -22,7 +22,8 @@ public class SousPosition {
     @Column(length = 1000)
 
     private String libelleSousPosition;
-    @ManyToOne
+    @ManyToOne(optional = false)
+
     @JoinColumn(name = "id_position")
     private Position position;
     @OneToMany(mappedBy = "sousPosition", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

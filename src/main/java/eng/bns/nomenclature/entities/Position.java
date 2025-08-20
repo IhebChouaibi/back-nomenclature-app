@@ -22,7 +22,8 @@ public class Position {
     @Column(length = 1000)
 
     private String libellePosition;
-    @ManyToOne
+    @ManyToOne(optional = false)
+
     @JoinColumn(name="id_Chapitre")
     private Chapitre chapitre;
     @OneToMany(mappedBy = "position", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

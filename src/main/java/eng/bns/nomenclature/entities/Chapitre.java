@@ -21,7 +21,7 @@ public class Chapitre {
     private String codeChapitre;
     private String libelleChapitre;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name="id_section")
     private Section  section;
 

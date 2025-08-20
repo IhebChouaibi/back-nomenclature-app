@@ -14,15 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name="Taric")
 @Entity
-public class TARIC {
+public class TARIC extends MetaDonnees {
     @Id   @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idNomenclature;
     @Column(unique = true )
 
     private String codeNomenclature;
-    @Column(length = 1000)
 
-    //private String libelleNomenclature ;
 
     private LocalDate dateDebutValid ;
     private LocalDate dateFinValid ;
@@ -31,11 +29,10 @@ public class TARIC {
     private Suffix suffix;
 
 
-    @ManyToOne
+    @ManyToOne(optional = false)
+
     @JoinColumn(name ="id_Nc")
     private NC nomenclatureCombinee;
-   // @OneToMany(mappedBy = "taric", cascade = CascadeType.ALL, orphanRemoval = true)
-   // private List<Reglementation> reglementations = new ArrayList<>();
 
     @OneToMany(mappedBy = "taric", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Description> descriptions = new ArrayList<>();
@@ -44,7 +41,12 @@ public class TARIC {
     private List<Notes> notes = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "taric", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany()
+    @JoinTable(
+            name = "mesure_tARIC",
+            joinColumns = @JoinColumn(name = "idNomenclature"),
+            inverseJoinColumns = @JoinColumn(name = "idMesure")
+    )
     private List<MesureTarifaire> mesures = new ArrayList<>();
 
     @PrePersist

@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 public class MouvementCommercial {
     @Id @GeneratedValue
 
-private Long id;
+private Long idMvtCommercial;
 private String libelle;
 }

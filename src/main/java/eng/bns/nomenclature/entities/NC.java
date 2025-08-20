@@ -22,7 +22,7 @@ public class NC {
     @Column(length = 1000)
 
     private  String libelleNC;
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name="id_Sous_Position")
     private SousPosition sousPosition;
 @OneToMany(mappedBy = "nomenclatureCombinee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

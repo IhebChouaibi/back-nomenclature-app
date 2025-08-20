@@ -22,7 +22,7 @@ public class Description {
     @Column(length = 1000, nullable = false)
     private String description;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "taric_id", nullable = false)
     private TARIC taric;
     @PrePersist

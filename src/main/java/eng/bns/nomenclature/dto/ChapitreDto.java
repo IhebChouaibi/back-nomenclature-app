@@ -1,6 +1,5 @@
 package eng.bns.nomenclature.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import java.util.List;

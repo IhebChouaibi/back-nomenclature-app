@@ -5,8 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
- @Getter
+import java.util.List;
+
+@Getter
  @Setter
  @AllArgsConstructor
  @NoArgsConstructor
@@ -16,13 +19,13 @@ public class ReglementationDto {
     private String ref;
     private String resume;
     private Boolean approuve;
-    private Date debutValidite;
-    private Date finValidite;
+    private LocalDate debutValidite;
+    private LocalDate finValidite;
 
-     private Long idEtat;
+     private Long  idEtat;
      private Long idPays;
      private Long idTypeReglement;
-     private Long idTaric;
+     private List<MesureDto> mesures;
 
 
  }

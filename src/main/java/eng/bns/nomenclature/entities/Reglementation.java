@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.lang.reflect.Type;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name="regelements")
 @Entity
-public class Reglementation {
+public class Reglementation extends MetaDonnees {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idReglement ;
 
@@ -28,8 +29,8 @@ public class Reglementation {
 
     @Column(name = "approuve")
     private Boolean approuve;
-    private Date debutValidite ;
-    private Date finValidite ;
+    private LocalDate debutValidite ;
+    private LocalDate finValidite ;
     @ManyToOne
     @JoinColumn(name = "id_etat")
     private Etat etat;
@@ -41,7 +42,7 @@ public class Reglementation {
     @JoinColumn(name="id_type_reglement")
     private TypeReglement typeReglement ;
 
-    @ManyToMany(mappedBy = "reglementations")
+    @OneToMany(mappedBy = "reglementation")
     private List<MesureTarifaire> mesures = new ArrayList<>();
 
 
