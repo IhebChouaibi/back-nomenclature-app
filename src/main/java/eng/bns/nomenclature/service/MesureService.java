@@ -1,12 +1,17 @@
 package eng.bns.nomenclature.service;
 
 import eng.bns.nomenclature.dto.MesureDto;
-import eng.bns.nomenclature.entities.MouvementCommercial;
+import eng.bns.nomenclature.entities.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface MesureService {
-    MesureDto addMesure(Long idNomenclature,MesureDto mesureDto);
-    MesureDto updateMesure(MesureDto mesureDto);
+    MesureDto addMesure(List<Long> idTarics, MesureDto mesureDto);
+    MesureDto updateMesure( Long idMesure,MesureDto mesureDto ,List<Long> idTarics);
     MesureDto deleteMesure(Long idMesure);
-    MesureDto getMesure(Long idMesure);
-    MesureDto addMouvementCommercial(MouvementCommercial mvt, MesureDto mesureDto);
+    Page<MesureDto> getAllMesures(Pageable pageable);
+    Page<MesureDto> getMesuresByStatut(String statut, Pageable pageable);
+
 }

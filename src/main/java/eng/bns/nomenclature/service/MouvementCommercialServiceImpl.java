@@ -24,12 +24,7 @@ public class MouvementCommercialServiceImpl implements MouvementCommercialServic
                 .orElseThrow(()->new RuntimeException("Mouvement Commercial inexistant"));
     }
 
-    @Override
-    public MouvementCommercial addMouvementCommercial(MouvementCommercial mouvementCommercial) {
-        return mouvementCommercialRepository.save(mouvementCommercial);
 
-
-    }
 
 
 }

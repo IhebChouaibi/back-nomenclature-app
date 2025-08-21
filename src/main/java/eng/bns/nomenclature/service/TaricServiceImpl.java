@@ -6,6 +6,7 @@ import eng.bns.nomenclature.dto.TaricRequest;
 import eng.bns.nomenclature.dto.TaricWithDetailsRequest;
 import eng.bns.nomenclature.entities.*;
 import eng.bns.nomenclature.exception.CodeNotFoundException;
+import eng.bns.nomenclature.exception.TaricNotFoundException;
 import eng.bns.nomenclature.mapper.NotesMapper;
 import eng.bns.nomenclature.mapper.TARICMapper;
 import eng.bns.nomenclature.repository.*;
@@ -16,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class TaricServiceImpl implements TaricService {
@@ -112,9 +116,27 @@ return null;
     }
 
     @Override
-    public Boolean ExistsTaricByCode(String code) {
-        TARIC existTaric = taricRepository.findByCodeNomenclature(code);
-        return existTaric != null;
+    public TARIC getTaricById(Long idTaric) {
+        return null;
+    }
+
+
+
+    @Override
+    public    List<TARIC>  getTaricsById(List<Long> idTarics) {
+        List<TARIC> tarics = taricRepository.findAllById(idTarics);
+
+        if (tarics.isEmpty()) {
+            throw new TaricNotFoundException("Aucun TARIC trouvé avec les id: " + idTarics  );
+        }
+        if(tarics.size() != idTarics.size()){
+            List<Long> taricIds = tarics.stream().map(TARIC::getIdNomenclature).toList();
+            List<Long> notFoundIds = idTarics.stream().filter(id -> !taricIds.contains(id)).toList();
+            throw new TaricNotFoundException("les Taric suivants sont introuvable:" + notFoundIds);
+
+        }
+
+        return tarics;
 
 
     }

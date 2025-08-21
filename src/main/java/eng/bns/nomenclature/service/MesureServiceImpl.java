@@ -1,12 +1,17 @@
 package eng.bns.nomenclature.service;
 
 import eng.bns.nomenclature.dto.MesureDto;
-import eng.bns.nomenclature.entities.MesureTarifaire;
-import eng.bns.nomenclature.entities.MouvementCommercial;
+import eng.bns.nomenclature.entities.*;
 import eng.bns.nomenclature.mapper.MesureMapper;
 import eng.bns.nomenclature.repository.MesureTarifaireRepository;
+import eng.bns.nomenclature.repository.StatutRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -14,27 +19,111 @@ import org.springframework.stereotype.Service;
 public class MesureServiceImpl implements MesureService{
     private final MesureMapper mesureMapper;
     private final MesureTarifaireRepository mesureTarifaireRepository;
-    @Override
-    public MesureDto addMesure(Long idNomenclature, MesureDto mesureDto) {
-        return null;
-    }
+    private final TaricService taricService;
+    private final StatutRepository statutRepository ;
+
 
     @Override
-    public MesureDto updateMesure(MesureDto mesureDto) {
-        return null;
+    public MesureDto addMesure(List<Long> idTarics, MesureDto mesureDto) {
+        List<TARIC> tarics = taricService.getTaricsById(idTarics);
+        MesureTarifaire mesure = mesureMapper.toEntity(mesureDto);
+        Statut enAttente = statutRepository.findByLibelle("EN_ATTENTE").orElseThrow(()->
+                new RuntimeException("Statut en attente introuvable"));
+
+
+        mesure.setTarics(tarics);
+        ValidationMesure validation = new ValidationMesure();
+        validation.setMesure(mesure);
+        validation.setDateValidation(null);
+        validation.setStatut(enAttente);
+        validation.setValidateur(null);
+        validation.setCommentaire("Ajout de la mesure, en attente de validation");
+
+
+        mesure.getValidations().add(validation);
+
+
+
+        MesureTarifaire savedMesure = mesureTarifaireRepository.save(mesure);
+        return mesureMapper.toDto(savedMesure);
+
+
+    }
+
+
+    @Override
+    public MesureDto updateMesure(Long idMesure,MesureDto mesureDto ,List<Long> idTarics) {
+        MesureTarifaire foundMesure = mesureTarifaireRepository.findById(idMesure)
+                .orElseThrow(() -> new RuntimeException("Mesure introuvable"));
+        mesureMapper.updateMesureFromDto(mesureDto,foundMesure);
+        if(!idTarics.isEmpty()){
+            List<TARIC> tarics = taricService.getTaricsById(idTarics);
+            if (tarics.size() != idTarics.size()){
+                throw new RuntimeException("Ceratains TARIC n'existent pas");
+
+            }
+            foundMesure.setTarics(tarics);
+
+        }
+
+        Statut enAttente = statutRepository.findByLibelle("EN_ATTENTE").orElseThrow(()->
+                new RuntimeException("Statut en attente introuvable"));
+
+
+        ValidationMesure validation = new ValidationMesure();
+        validation.setMesure(foundMesure);
+        validation.setDateValidation(null);
+        validation.setStatut(enAttente);
+        validation.setCommentaire("Mise à jour de la mesure, en attente de revalidation");
+
+        validation.setValidateur(null);
+
+        validation.setStatut(enAttente);
+        foundMesure.getValidations().add(validation);
+
+        MesureTarifaire savedMesure = mesureTarifaireRepository.save(foundMesure);
+        return mesureMapper.toDto(savedMesure);
     }
 
     @Override
     public MesureDto deleteMesure(Long idMesure) {
-        return null;
+        MesureTarifaire existMesure = mesureTarifaireRepository.findById(idMesure).orElseThrow(()
+                ->new RuntimeException("Mesure introuvable"));
+        Statut enAttente = statutRepository.findByLibelle("EN_ATTENTE").orElseThrow(()->
+                new RuntimeException("Statut en attente introuvable"));
+
+
+        ValidationMesure validation = new ValidationMesure();
+        validation.setMesure(existMesure);
+        validation.setDateValidation(null);
+        validation.setStatut(enAttente);
+        validation.setCommentaire(" suppression de la mesure, en attente de validation");
+
+        validation.setValidateur(null);
+
+        validation.setStatut(enAttente);
+        existMesure.getValidations().add(validation);
+        mesureTarifaireRepository.save(existMesure);
+        return mesureMapper.toDto(existMesure);
+
     }
 
     @Override
-    public MesureDto getMesure(Long idMesure) {
-        return null;
+    public Page<MesureDto> getAllMesures( Pageable pageable) {
+
+        Page<MesureTarifaire> mesureTarifaires = mesureTarifaireRepository.findAll( pageable);
+        return mesureTarifaires.map(mesureMapper::toDto);
+
     }
 
     @Override
-    public MesureDto addMouvementCommercial(MouvementCommercial mvt, MesureDto mesureDto) {
-        return null;}
+    public Page<MesureDto> getMesuresByStatut(String statut, Pageable pageable) {
+        Statut status =statutRepository.findByLibelle(statut).orElseThrow(()->
+                new RuntimeException("Statut introuvable"));
+
+        return mesureTarifaireRepository.findByStatut(statut, pageable)
+                .map(mesureMapper::toDto);
+    }
+
+
 }

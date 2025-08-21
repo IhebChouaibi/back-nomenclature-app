@@ -41,12 +41,9 @@ public class TARIC extends MetaDonnees {
     private List<Notes> notes = new ArrayList<>();
 
 
-    @ManyToMany()
-    @JoinTable(
-            name = "mesure_tARIC",
-            joinColumns = @JoinColumn(name = "idNomenclature"),
-            inverseJoinColumns = @JoinColumn(name = "idMesure")
-    )
+    @ManyToMany(mappedBy = "tarics")
+
+
     private List<MesureTarifaire> mesures = new ArrayList<>();
 
     @PrePersist

@@ -2,10 +2,7 @@ package eng.bns.nomenclature.mapper;
 
 import eng.bns.nomenclature.dto.MesureDto;
 import eng.bns.nomenclature.entities.MesureTarifaire;
-import org.mapstruct.InheritInverseConfiguration;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface MesureMapper {
@@ -21,4 +18,7 @@ public interface MesureMapper {
     @Mapping(target = "reglementation", ignore = true)
 
     MesureTarifaire toEntity(MesureDto mesureDto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateMesureFromDto(MesureDto dto, @MappingTarget MesureTarifaire entity);
 }

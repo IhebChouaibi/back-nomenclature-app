@@ -23,6 +23,8 @@ public class ValidationMesure extends MetaDonnees  {
 
     private Long idValidation ;
 
+    private String commentaire ;
+
     @Column(nullable = false)
     private LocalDate dateValidation ;
     @ManyToOne

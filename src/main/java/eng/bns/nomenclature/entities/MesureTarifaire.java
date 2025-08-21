@@ -36,10 +36,13 @@ public class MesureTarifaire  extends MetaDonnees {
     @JoinColumn(name = "reglementation_id")
     private Reglementation reglementation;
 
-    @ManyToMany(mappedBy = "mesures")
+    @ManyToMany()
+    @JoinTable(name = "taric_mesure",
+            joinColumns = @JoinColumn(name = "id_mesure"),
+            inverseJoinColumns = @JoinColumn(name = "id_taric"))
      private List<TARIC> tarics = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mesure", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "mesure", cascade = CascadeType.ALL )
     private List<ValidationMesure> validations = new ArrayList<>();
 
 }

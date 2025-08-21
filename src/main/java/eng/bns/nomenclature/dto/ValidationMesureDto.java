@@ -14,6 +14,7 @@ public class ValidationMesureDto {
     private Long idValidation;
     private Long idMesure;
     private Long idStatus;
+    private String commentaire ;
     private LocalDate dateValidation;
     private Long idValidateur;
 

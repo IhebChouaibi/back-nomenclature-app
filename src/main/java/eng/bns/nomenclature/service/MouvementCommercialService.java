@@ -7,7 +7,6 @@ import java.util.List;
 public interface MouvementCommercialService {
     List<MouvementCommercial> getAllMouvementCommercial();
     MouvementCommercial getMouvementCommercialById(Long id);
-    MouvementCommercial addMouvementCommercial(MouvementCommercial mouvementCommercial);
 
 
 }
