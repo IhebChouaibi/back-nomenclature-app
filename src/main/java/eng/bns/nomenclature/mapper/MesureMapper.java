@@ -16,7 +16,7 @@ public interface MesureMapper {
     @InheritInverseConfiguration
     @Mapping(target = "mouvementCommercial", ignore = true)
     @Mapping(target = "reglementation", ignore = true)
-
+    @Mapping(target = "validations", ignore = true)
     MesureTarifaire toEntity(MesureDto mesureDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

@@ -3,25 +3,24 @@ package eng.bns.nomenclature.web;
 import eng.bns.nomenclature.dto.MesureDto;
 import eng.bns.nomenclature.service.MesureService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/mesure")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class MesureController {
     private final MesureService mesureService;
 
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
      public ResponseEntity<MesureDto> addMesure( @RequestParam("idTarics") List<Long> idTarics,
                                                @RequestBody MesureDto mesureDto
@@ -29,4 +28,25 @@ public class MesureController {
         MesureDto createdMesure = mesureService.addMesure(idTarics,mesureDto);
          return new ResponseEntity<>(createdMesure , HttpStatus.CREATED);
      }
+     @PatchMapping("/update")
+     public ResponseEntity<MesureDto> updateMesure(@RequestParam Long idMesure, @RequestParam List<Long> idTarics, @RequestBody MesureDto mesureDto){
+          MesureDto updatedMesure = mesureService.updateMesure(idMesure,mesureDto,idTarics);
+          return ResponseEntity.ok(updatedMesure);
+      }
+
+      @GetMapping("/getAllMesure")
+      public  ResponseEntity<Page<MesureDto>> getAllMesures(@RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size){
+       Page<MesureDto> mesureDtos  = mesureService.getAllMesures(PageRequest.of(page,size));
+        return ResponseEntity.ok(mesureDtos);
+
+      }
+      @GetMapping("/getMesureByStatut")
+      public  ResponseEntity<Page<MesureDto>> getMesuresByStatut(@RequestParam String statut,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size){
+        mesureService.getMesuresByStatut(statut,PageRequest.of(page,size));
+            return ResponseEntity.ok().build();
+                                                                }
+
 }

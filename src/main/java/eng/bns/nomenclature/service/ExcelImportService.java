@@ -302,12 +302,16 @@ public class ExcelImportService {
 
 
         if (!newLibelle.isEmpty() ) {
-            Description description = new Description();
-            description.setDescription(newLibelle);
-            description.setStatus("1");
-            description.setTaric(taric);
-            taric.getDescriptions().add(description);
-            taricRepository.save(taric);
+            boolean alreadyExist = taric.getDescriptions().stream()
+                    .anyMatch(description -> description.getDescription().equalsIgnoreCase(newLibelle));
+            if(!alreadyExist){
+                Description description = new Description();
+                description.setDescription(newLibelle);
+                description.setStatus("1");
+                description.setTaric(taric);
+                taric.getDescriptions().add(description);
+                taricRepository.save(taric);
+            }
         }
     }
     private Suffix getOrCreateSuffix(String suffixCode, Map<String, Suffix> cache) {

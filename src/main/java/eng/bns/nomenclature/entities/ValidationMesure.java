@@ -25,7 +25,7 @@ public class ValidationMesure extends MetaDonnees  {
 
     private String commentaire ;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDate dateValidation ;
     @ManyToOne
     @JoinColumn(name="id_Status")
@@ -37,7 +37,7 @@ public class ValidationMesure extends MetaDonnees  {
 
     private MesureTarifaire mesure ;
 
-    @ManyToOne(optional = false)
+    @ManyToOne()
     @JoinColumn(name="id_validateur")
     private User Validateur ;
 

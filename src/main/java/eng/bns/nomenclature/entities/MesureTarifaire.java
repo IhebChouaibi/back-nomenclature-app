@@ -42,7 +42,7 @@ public class MesureTarifaire  extends MetaDonnees {
             inverseJoinColumns = @JoinColumn(name = "id_taric"))
      private List<TARIC> tarics = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mesure", cascade = CascadeType.ALL )
+    @OneToMany(mappedBy = "mesure", cascade = CascadeType.ALL, orphanRemoval = true )
     private List<ValidationMesure> validations = new ArrayList<>();
 
 }
