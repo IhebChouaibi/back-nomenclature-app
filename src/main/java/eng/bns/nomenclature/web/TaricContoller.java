@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/taric")
 public class TaricContoller {
 
     private final TaricService taricService;
@@ -24,16 +26,14 @@ public class TaricContoller {
     private  final NotesService notesService;
 
 
-    @PostMapping("taric/addTaric")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/addTaric")
 
     public ResponseEntity<TARICDto> addTaric(@RequestBody TaricWithDetailsRequest taricRequest){
       TARICDto createdTaric =  taricService.createTaric(taricRequest);
         return new  ResponseEntity<>(createdTaric, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("taric/addnote")
+    @PostMapping("/addnote")
     public ResponseEntity<NotesDto>  addNotesToTaric(@RequestParam long idNomenclature , @RequestBody NotesDto notesDto){
        NotesDto newNote=  notesService.addNotesToTaric(idNomenclature,notesDto);
         return   ResponseEntity.ok(newNote);
@@ -41,8 +41,7 @@ public class TaricContoller {
     }
 
 
-    @GetMapping("taric/search")
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/search")
     public ResponseEntity<Page<TARICDto>> searchTaricByCode(@RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "20") int size,
                                                             @RequestParam String  codeTaric){
@@ -50,20 +49,24 @@ public class TaricContoller {
         return ResponseEntity.ok(taricDtos);
 
     }
-    @GetMapping("taric/suffix/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/suffix/{id}")
     public ResponseEntity<SuffixDto> getSuffix(@PathVariable Long id){
         SuffixDto suffixDto = suffixService.getSuffix(id);
         return ResponseEntity.ok(suffixDto);
     }
 
 
-    @PostMapping("taric/addSuffix/{idNomenclature}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/addSuffix/{idNomenclature}")
     public ResponseEntity<SuffixDto> addSuffix(@PathVariable Long idNomenclature ,@RequestBody SuffixDto suffixDto){
         suffixService.addsuffix(idNomenclature,suffixDto);
         return  ResponseEntity.ok().build();
     }
+    @GetMapping("/getTaricById")
+    public ResponseEntity<TARICDto> getTaricById(@RequestParam Long idTaric){
+        TARICDto taricDto = taricService.getTaricById(idTaric);
+        return ResponseEntity.ok(taricDto);
+    }
+
 
 }
 

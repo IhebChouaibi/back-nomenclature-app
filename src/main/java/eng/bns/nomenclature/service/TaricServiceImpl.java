@@ -116,8 +116,9 @@ return null;
     }
 
     @Override
-    public TARIC getTaricById(Long idTaric) {
-        return null;
+    public TARICDto getTaricById(Long idTaric) {
+        TARIC taric = taricRepository.findById(idTaric).orElseThrow(()-> new RuntimeException("TARIC introuvable"));
+        return taricMapper.toDto(taric);
     }
 
 

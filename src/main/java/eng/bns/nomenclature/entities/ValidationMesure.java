@@ -39,7 +39,7 @@ public class ValidationMesure extends MetaDonnees  {
 
     @ManyToOne()
     @JoinColumn(name="id_validateur")
-    private User Validateur ;
+    private User validateur ;
 
 
 

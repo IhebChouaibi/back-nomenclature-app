@@ -20,4 +20,5 @@ public class TARICDto {
     private List<NotesDto> notes;
     private Long idNCombinee;
     private Long idSuffix;
+    private List<MesureDto> mesures;
 }

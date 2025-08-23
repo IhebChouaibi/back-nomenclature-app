@@ -22,7 +22,7 @@ public class MesureDto {
     private Long idMvtCommercial ;
     private Long  idReglement;
 
-    private List<TARICDto> tarics;
+
     private List<ValidationMesureDto> validations;
 
 

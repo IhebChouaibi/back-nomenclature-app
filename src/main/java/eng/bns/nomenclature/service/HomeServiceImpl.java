@@ -35,7 +35,7 @@ public class HomeServiceImpl implements HomeService{
         private  SuffixMapper suffixMapper;
     private SuffixRepository  suffixRepository;
     private final TaricRepository taricRepository;
-
+private final  MesureMapper mesureMapper;
 
 
     @Override
@@ -88,13 +88,19 @@ public class HomeServiceImpl implements HomeService{
                                 List<NCDto> ncDtos =   new ArrayList<>();
                                 for (NC nc :Optional.ofNullable(sousPosition.getNomenclatureCombinees()).orElse(Collections.emptyList())) {
                                     Hibernate.initialize(nc.getNomenclatures());
-                                    List<TARICDto> taricDtos=
+                                    List<TARICDto> taricDtos=new ArrayList<>();
+                                    for(TARIC taric:Optional.ofNullable(nc.getNomenclatures()).orElse(Collections.emptyList())){
+                                        List<MesureDto> mesuresDtos=Optional.ofNullable(taric.getMesures())
+                                                .orElse(Collections.emptyList())
+                                                .stream()
+                                                .map(mesureMapper::toDto)
+                                                .collect(Collectors.toList());
+                                        TARICDto taricDto=taricMapper.toDto(taric);
+                                        taricDto.setMesures(mesuresDtos);
+                                        taricDtos.add(taricDto);
+                                    }
 
-                                            Optional.ofNullable(nc.getNomenclatures())
-                                            .orElse(Collections.emptyList())
-                                            .stream()
-                                            .map(taricMapper::toDto)
-                                            .collect(Collectors.toList());
+                                          ;
                                     NCDto ncDto = ncMapper.toDto(nc);
                                     ncDto.setNomenclatures(taricDtos);
                                     ncDtos.add(ncDto);
