@@ -1,24 +1,28 @@
 package eng.bns.nomenclature.service;
 
-import eng.bns.nomenclature.dto.NotesDto;
-import eng.bns.nomenclature.dto.TARICDto;
-import eng.bns.nomenclature.dto.TaricRequest;
-import eng.bns.nomenclature.dto.TaricWithDetailsRequest;
+import eng.bns.nomenclature.dto.*;
 import eng.bns.nomenclature.entities.*;
 import eng.bns.nomenclature.exception.CodeNotFoundException;
 import eng.bns.nomenclature.exception.TaricNotFoundException;
+import eng.bns.nomenclature.mapper.MesureMapper;
 import eng.bns.nomenclature.mapper.NotesMapper;
 import eng.bns.nomenclature.mapper.TARICMapper;
+import eng.bns.nomenclature.mapper.ValidationMapper;
 import eng.bns.nomenclature.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -32,6 +36,8 @@ public class TaricServiceImpl implements TaricService {
      private final NotesService notesService;
      private final  DescriptionService descriptionService;
      private final SuffixService suffixService;
+     private final MesureMapper mesureMapper;
+     private final ValidationMapper validationMapper;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -115,11 +121,35 @@ return null;
         return taric.map(taricMapper::toDto);
     }
 
+
     @Override
     public TARICDto getTaricById(Long idTaric) {
-        TARIC taric = taricRepository.findById(idTaric).orElseThrow(()-> new RuntimeException("TARIC introuvable"));
-        return taricMapper.toDto(taric);
+        TARIC taric = taricRepository.findById(idTaric)
+                .orElseThrow(() -> new RuntimeException("TARIC introuvable"));
+
+        Hibernate.initialize(taric.getMesures());
+        List<MesureDto> mesureDtos = new ArrayList<>();
+
+        for (MesureTarifaire mesure : Optional.ofNullable(taric.getMesures()).orElse(Collections.emptyList())) {
+            Hibernate.initialize(mesure.getValidations());
+
+            List<ValidationMesureDto> validationDtos = Optional.ofNullable(mesure.getValidations())
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .map(validationMapper::toDto)
+                    .collect(Collectors.toList());
+
+            MesureDto mesureDto = mesureMapper.toDto(mesure);
+            mesureDto.setValidations(validationDtos);
+            mesureDtos.add(mesureDto);
+        }
+
+        TARICDto taricDto = taricMapper.toDto(taric);
+        taricDto.setMesures(mesureDtos);
+
+        return taricDto;
     }
+
 
 
 

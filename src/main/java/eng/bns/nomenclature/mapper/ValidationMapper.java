@@ -11,15 +11,13 @@ import org.mapstruct.Mappings;
 
 public interface ValidationMapper {
 
-    @Mappings(
-            {
-                    @Mapping(source = "mesure.idMesure" , target = "idMesure"),
-                    @Mapping(source = "validateur.id" , target="idValidateur"),
+                    @Mapping(source = "mesure.idMesure" , target = "idMesure")
+                    @Mapping(source = "validateur.id" , target="idValidateur")
                     @Mapping(source="statut.idStatut" ,target = "idStatus")
-            }
 
 
-    )
+
+
 
     ValidationMesureDto toDto(ValidationMesure validationMesure);
     @InheritInverseConfiguration

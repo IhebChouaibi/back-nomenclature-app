@@ -21,6 +21,8 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
+
 public class HomeController {
     private final UserRepository userRepository;
     private final HomeService homeService;
@@ -53,7 +55,6 @@ private final SectionRepository sectionRepository;
 
         return ResponseEntity.ok(response);
     }
-@PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/test-sections")
     public ResponseEntity<?> testSections() {
         List<Section> sections = sectionRepository.findAll();
@@ -62,7 +63,6 @@ private final SectionRepository sectionRepository;
     }
 
     @GetMapping("/section")
-    @PreAuthorize("hasRole('ADMIN')")
 
     public ResponseEntity<Page<SectionDto>> section( @RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "7") int size){
@@ -75,7 +75,6 @@ private final SectionRepository sectionRepository;
 
 
     @PostMapping("addPosition")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PositionDto> addPosition (
             @RequestBody PositionDto positionDto){
         PositionDto createdPosition = homeService.addPosition(positionDto);
@@ -84,7 +83,6 @@ private final SectionRepository sectionRepository;
     }
 
     @PostMapping("addSousPosition")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SousPositionDto> addSousPosition (
             @RequestBody SousPositionDto sousPositionDto){
         SousPositionDto sousPosition = homeService.addSousPosition(sousPositionDto);
@@ -93,7 +91,6 @@ private final SectionRepository sectionRepository;
     }
 
     @PostMapping("addSection")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SectionDto> addSection (
             @RequestBody SectionDto sectionDto) {
         SectionDto section = homeService.addSection(sectionDto);
@@ -109,7 +106,6 @@ private final SectionRepository sectionRepository;
     }
 
     @PatchMapping("updateSection/{idSection}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SectionDto> updateSection(@PathVariable Long idSection, @RequestBody String  sectionLibelle) {
         SectionDto newSection= homeService.updateSectionLibelle(idSection,sectionLibelle);
 
@@ -119,7 +115,6 @@ return ResponseEntity.ok(newSection);
 
 
     @PatchMapping("updatePosition/{idPosition}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PositionDto> updatePosition( @PathVariable Long idPosition, @RequestBody PositionDto  positionDto) {
         PositionDto newPosition= homeService.updatePosition(idPosition,positionDto);
 
@@ -137,7 +132,6 @@ return ResponseEntity.ok(newSection);
     }
 
     @PatchMapping("updateChapitre/{idChapitre}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ChapitreDto> updateChapitre( @PathVariable Long idChapitre, @RequestBody ChapitreDto  chapitreDto) {
         ChapitreDto newSousPosition= homeService.updateChapitre(idChapitre,chapitreDto);
 
@@ -147,25 +141,21 @@ return ResponseEntity.ok(newSection);
 
 
     @DeleteMapping("deleteSection")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SectionDto> deleteSection(Long idSection) {
         homeService.deleteSection(idSection);
         return ResponseEntity.ok().build();
     }
     @DeleteMapping("deletePosition")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PositionDto> deletePosition(Long idPosition) {
         homeService.deletePosition(idPosition);
         return ResponseEntity.ok().build();
     }
     @DeleteMapping("deleteSousPosition")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SousPositionDto> deleteSousPosition(Long idSousPosition) {
         homeService.deleteSousPosition(idSousPosition);
         return ResponseEntity.ok().build();
     }
     @DeleteMapping("deleteChapitre")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ChapitreDto> deleteChapitre(Long idChapitre) {
         homeService.deleteChapitre(idChapitre);
         return ResponseEntity.ok().build();

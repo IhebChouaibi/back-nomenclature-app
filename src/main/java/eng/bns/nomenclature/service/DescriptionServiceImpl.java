@@ -18,6 +18,8 @@ public class DescriptionServiceImpl implements DescriptionService{
 
     @Override
     public DescriptionDto updateDescription(Long idNomenclature, DescriptionDto descriptionDto) {
+        TARIC taric = taricRepository.findById(idNomenclature).orElseThrow(() -> new RuntimeException("Code TARIC inexistant"));
+
         Description oldDescription = descriptionRepository.findByTaric_IdNomenclatureOrderByIdDesc(idNomenclature);
         if(oldDescription != null){
 
@@ -25,9 +27,15 @@ public class DescriptionServiceImpl implements DescriptionService{
             descriptionRepository.save(oldDescription);
         }
 
-      Description  newDescription = descriptionRepository.save(descriptionMapper.toEntity(descriptionDto));
+        Description newDescription = descriptionMapper.toEntity(descriptionDto);
+
+        newDescription.setTaric(taric);
         newDescription.setStatus("1");
-        return descriptionMapper.toDto(newDescription);
+
+        Description saved = descriptionRepository.save(newDescription);
+
+
+        return descriptionMapper.toDto(saved);
 
     }
 

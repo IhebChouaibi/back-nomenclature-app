@@ -1,7 +1,12 @@
 package eng.bns.nomenclature.web;
 
 import eng.bns.nomenclature.dto.MesureDto;
+import eng.bns.nomenclature.dto.MvtDto;
+import eng.bns.nomenclature.dto.ReglementationDto;
+import eng.bns.nomenclature.entities.MouvementCommercial;
 import eng.bns.nomenclature.service.MesureService;
+import eng.bns.nomenclature.service.MouvementCommercialService;
+import eng.bns.nomenclature.service.ReglementationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +24,8 @@ import java.util.List;
 @PreAuthorize("hasRole('ADMIN')")
 public class MesureController {
     private final MesureService mesureService;
-
+    private final MouvementCommercialService mouvementCommercialService;
+private final ReglementationService reglementationService;
 
     @PostMapping("/add")
      public ResponseEntity<MesureDto> addMesure( @RequestParam("idTarics") List<Long> idTarics,
@@ -47,6 +53,19 @@ public class MesureController {
                                                                 @RequestParam(defaultValue = "10") int size){
         mesureService.getMesuresByStatut(statut,PageRequest.of(page,size));
             return ResponseEntity.ok().build();
-                                                                }
+
+      }
+      @GetMapping("/getAllMvt")
+    public ResponseEntity<List<MvtDto>> getAllMvt(){
+       List<MvtDto> MvtList = mouvementCommercialService.getAllMouvementCommercial();
+       return ResponseEntity.ok(MvtList);
+
+    }
+    @GetMapping("/getAllReglementation")
+    public ResponseEntity<List<ReglementationDto>> getAllReglementation(){
+        List<ReglementationDto> reglementationList = reglementationService.getAllReglementation();
+        return ResponseEntity.ok(reglementationList);
+    }
+
 
 }

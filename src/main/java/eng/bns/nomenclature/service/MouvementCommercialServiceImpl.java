@@ -1,6 +1,8 @@
 package eng.bns.nomenclature.service;
 
+import eng.bns.nomenclature.dto.MvtDto;
 import eng.bns.nomenclature.entities.MouvementCommercial;
+import eng.bns.nomenclature.mapper.MvtMapper;
 import eng.bns.nomenclature.repository.MouvementCommercialRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,16 +14,18 @@ import java.util.List;
 
 public class MouvementCommercialServiceImpl implements MouvementCommercialService {
     private final MouvementCommercialRepository mouvementCommercialRepository;
+    private final MvtMapper mvtMapper;
     @Override
-    public List<MouvementCommercial> getAllMouvementCommercial() {
-        return mouvementCommercialRepository.findAll();
+    public List<MvtDto> getAllMouvementCommercial() {
+        return mouvementCommercialRepository.findAll().stream().map(mvtMapper::toDto).toList();
 
     }
 
     @Override
-    public MouvementCommercial getMouvementCommercialById(Long id) {
-        return mouvementCommercialRepository.findById(id)
+    public MvtDto getMouvementCommercialById(Long id) {
+        MouvementCommercial mvt = mouvementCommercialRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Mouvement Commercial inexistant"));
+        return mvtMapper.toDto(mvt);
     }
 
 

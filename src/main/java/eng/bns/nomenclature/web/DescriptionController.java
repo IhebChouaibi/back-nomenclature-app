@@ -5,31 +5,28 @@ import eng.bns.nomenclature.service.DescriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/description")
 public class DescriptionController {
     private final DescriptionService descriptionService;
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/description/update")
-    public ResponseEntity<DescriptionDto> updateDescription(@RequestParam Long idNomenclature, DescriptionDto descriptionDto){
-        descriptionService.updateDescription(idNomenclature,descriptionDto);
-        return ResponseEntity.ok().build();
+    @PatchMapping("/update")
+    public ResponseEntity<DescriptionDto> updateDescription(@RequestParam Long idNomenclature, @RequestBody DescriptionDto descriptionDto){
+        DescriptionDto newDescription = descriptionService.updateDescription(idNomenclature,descriptionDto);
+        return ResponseEntity.ok(newDescription);
 
     }
-    @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/description/delete")
+    @PatchMapping("/delete")
     public ResponseEntity<DescriptionDto> deleteDescription(@RequestParam Long idNomenclature){
         DescriptionDto descriptionDto = descriptionService.deleteDescription(idNomenclature);
         return ResponseEntity.ok(descriptionDto);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/description/add")
+    @PatchMapping("/add")
     public ResponseEntity<DescriptionDto>   addDescription(@RequestParam Long idNomenclature,DescriptionDto descriptionDto){
         descriptionService.createDescription(idNomenclature,descriptionDto);
         return ResponseEntity.ok().build();

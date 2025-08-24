@@ -1,7 +1,6 @@
 package eng.bns.nomenclature.web;
 
 import eng.bns.nomenclature.dto.*;
-import eng.bns.nomenclature.entities.Notes;
 import eng.bns.nomenclature.service.NotesService;
 import eng.bns.nomenclature.service.SuffixService;
 import eng.bns.nomenclature.service.TaricService;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/taric")
-public class TaricContoller {
+public class TaricController {
 
     private final TaricService taricService;
     private final SuffixService suffixService;

@@ -36,6 +36,8 @@ public class HomeServiceImpl implements HomeService{
     private SuffixRepository  suffixRepository;
     private final TaricRepository taricRepository;
 private final  MesureMapper mesureMapper;
+private final  ReglementMapper reglementMapper;
+private final ValidationMapper validationMapper;
 
 
     @Override
@@ -90,11 +92,22 @@ private final  MesureMapper mesureMapper;
                                     Hibernate.initialize(nc.getNomenclatures());
                                     List<TARICDto> taricDtos=new ArrayList<>();
                                     for(TARIC taric:Optional.ofNullable(nc.getNomenclatures()).orElse(Collections.emptyList())){
-                                        List<MesureDto> mesuresDtos=Optional.ofNullable(taric.getMesures())
-                                                .orElse(Collections.emptyList())
-                                                .stream()
-                                                .map(mesureMapper::toDto)
-                                                .collect(Collectors.toList());
+                                        Hibernate.initialize(taric.getMesures());
+
+                                        List<MesureDto> mesuresDtos=new ArrayList<>();
+                                        for (MesureTarifaire mesureTarifaire :Optional.ofNullable(taric.getMesures()).orElse(Collections.emptyList())){
+                                            Hibernate.initialize(mesureTarifaire.getValidations());
+                                            List<ValidationMesureDto> validationMesureDtos =Optional.ofNullable(mesureTarifaire.getValidations())
+                                                    .orElse(Collections.emptyList())
+                                                    .stream()
+                                                    .map(validationMapper::toDto)
+                                                    .collect(Collectors.toList());
+                                            MesureDto mesureDto=mesureMapper.toDto(mesureTarifaire);
+                                            mesureDto.setValidations(validationMesureDtos);
+                                            mesuresDtos.add(mesureDto);
+
+                                        }
+
                                         TARICDto taricDto=taricMapper.toDto(taric);
                                         taricDto.setMesures(mesuresDtos);
                                         taricDtos.add(taricDto);
