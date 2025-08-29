@@ -76,15 +76,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return null;
         }
 
-        // Pattern to match "name=ADMIN" in the role string
         Pattern pattern = Pattern.compile("name=([A-Z]+)");
         Matcher matcher = pattern.matcher(role);
 
         if (matcher.find()) {
-            return matcher.group(1); // Returns "ADMIN"
+            return matcher.group(1);
         }
 
-        // Fallback to simple extraction if pattern doesn't match
         return role.replace("ROLE_", "")
                 .replaceAll("\\[.*?\\]", "")
                 .trim();

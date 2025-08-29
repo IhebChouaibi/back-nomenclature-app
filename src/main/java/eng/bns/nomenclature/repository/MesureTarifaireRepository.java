@@ -9,11 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 
 public interface MesureTarifaireRepository extends JpaRepository<MesureTarifaire,Long> {
-    @Query("""
-        SELECT m FROM MesureTarifaire m
-        JOIN m.validations v
-        WHERE v.statut.libelle = :libelle
-        ORDER BY v.dateValidation DESC
-    """)
-    Page<MesureTarifaire> findByStatut(@Param("libelle") String libelle, Pageable pageable);
+
+    Page<MesureTarifaire> findByStatut_Libelle( String libelle, Pageable pageable);
 }

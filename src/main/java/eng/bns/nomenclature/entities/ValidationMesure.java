@@ -27,6 +27,9 @@ public class ValidationMesure extends MetaDonnees  {
 
     @Column()
     private LocalDate dateValidation ;
+
+
+
     @ManyToOne
     @JoinColumn(name="id_Status")
     private Statut statut ;

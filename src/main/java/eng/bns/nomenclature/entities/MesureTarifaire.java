@@ -30,6 +30,9 @@ public class MesureTarifaire  extends MetaDonnees {
     @ManyToOne
     @JoinColumn(name="id_mouvement")
     private MouvementCommercial mouvementCommercial ;
+    @ManyToOne
+    @JoinColumn(name="id_Status")
+    private Statut statut ;
 
 
     @ManyToOne

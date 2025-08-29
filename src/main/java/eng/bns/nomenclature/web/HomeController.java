@@ -21,7 +21,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 
 @RestController
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN') or hasRole('RESPONSABLE')")
 
 public class HomeController {
     private final UserRepository userRepository;

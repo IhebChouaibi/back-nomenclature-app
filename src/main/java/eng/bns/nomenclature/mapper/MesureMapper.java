@@ -8,7 +8,9 @@ import org.mapstruct.*;
 public interface MesureMapper {
     @Mappings({
             @Mapping(source = "mouvementCommercial.idMvtCommercial" , target = "idMvtCommercial"),
-            @Mapping(source = "reglementation.idReglement",target = "idReglement")
+            @Mapping(source = "reglementation.idReglement",target = "idReglement"),
+            @Mapping(source="statut.idStatut" ,target = "idStatut")
+
     })
     MesureDto toDto(MesureTarifaire  mesureTarifaire);
 
@@ -17,6 +19,7 @@ public interface MesureMapper {
     @Mapping(target = "mouvementCommercial", ignore = true)
     @Mapping(target = "reglementation", ignore = true)
     @Mapping(target = "validations", ignore = true)
+    @Mapping(target = "statut", ignore = true)
     MesureTarifaire toEntity(MesureDto mesureDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

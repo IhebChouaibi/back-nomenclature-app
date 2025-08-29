@@ -24,9 +24,8 @@ public class AuthController {
     private final LoginService loginService;
     private final AuthenticationManager authenticationManager;
     private final UserRepository   userRepository;
-    private final JwtService  jwtService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RESPONSABLE')")
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> signin(@RequestBody AuthRequest authRequest) throws JOSEException {
         try {

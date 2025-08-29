@@ -1,8 +1,7 @@
 package eng.bns.nomenclature.web;
 
-import eng.bns.nomenclature.dto.MesureDto;
-import eng.bns.nomenclature.dto.MvtDto;
-import eng.bns.nomenclature.dto.ReglementationDto;
+import eng.bns.nomenclature.dto.*;
+import eng.bns.nomenclature.entities.MesureTarifaire;
 import eng.bns.nomenclature.entities.MouvementCommercial;
 import eng.bns.nomenclature.service.MesureService;
 import eng.bns.nomenclature.service.MouvementCommercialService;
@@ -47,12 +46,13 @@ private final ReglementationService reglementationService;
         return ResponseEntity.ok(mesureDtos);
 
       }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('RESPONSABLE')")
       @GetMapping("/getMesureByStatut")
       public  ResponseEntity<Page<MesureDto>> getMesuresByStatut(@RequestParam String statut,
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int size){
-        mesureService.getMesuresByStatut(statut,PageRequest.of(page,size));
-            return ResponseEntity.ok().build();
+       Page<MesureDto> mesureDtos = mesureService.getMesuresByStatut(statut,PageRequest.of(page,size));
+            return ResponseEntity.ok(mesureDtos);
 
       }
       @GetMapping("/getAllMvt")
@@ -66,6 +66,17 @@ private final ReglementationService reglementationService;
         List<ReglementationDto> reglementationList = reglementationService.getAllReglementation();
         return ResponseEntity.ok(reglementationList);
     }
+    @PreAuthorize("hasRole('RESPONSABLE')")
+    @PostMapping("/validation")
+    public ResponseEntity< List<MesureDto>> updateMesureStatus(
+            @RequestParam List<Long> idMesures,
+            @RequestParam  Long responsableId,
+            @RequestBody ValidationRequest validationRequest
+    ){
+        List<MesureDto> mesureDtos =  mesureService.tariterMesure(idMesures, responsableId,validationRequest.getCodeStatut(),
+                validationRequest.getCommentaire());
+        return ResponseEntity.ok(mesureDtos);
 
+    }
 
 }
